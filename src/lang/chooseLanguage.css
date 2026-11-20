@@ -1,0 +1,38 @@
+.cl {
+  min-height: 100vh;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 24px 16px;
+  background: var(--core-bg);
+  color: var(--core-ink);
+  text-align: center;
+}
+.cl h1 {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 40px;
+}
+.cl-ask {
+  margin: 0;
+  color: var(--core-muted);
+}
+.cl-list {
+  display: grid;
+  gap: 10px;
+  width: min(320px, 100%);
+}
+.cl-list button {
+  min-height: 52px;
+  border: 1px solid var(--core-gold);
+  border-radius: 12px;
+  background: var(--core-surface);
+  color: var(--core-ink);
+  font: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+.cl-list button:hover {
+  background: var(--core-soft);
+}

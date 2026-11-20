@@ -1,0 +1,35 @@
+{
+  "audioId": "ml-fixture-audio",
+  "book": "genesis",
+  "chapter": 1,
+  "durationSec": 5,
+  "verses": [
+    {
+      "v": "1",
+      "start": 0,
+      "end": 2.4
+    },
+    {
+      "v": "2",
+      "start": 2.5,
+      "end": 4.9
+    }
+  ],
+  "segments": [
+    {
+      "linkId": "fixture-1-1-a",
+      "start": 0.1,
+      "end": 0.9
+    },
+    {
+      "linkId": "fixture-1-1-b",
+      "start": 1,
+      "end": 1.6
+    },
+    {
+      "linkId": "fixture-1-1-c",
+      "start": 1.7,
+      "end": 2.3
+    }
+  ]
+}

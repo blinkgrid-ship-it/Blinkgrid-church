@@ -1,0 +1,314 @@
+/* The Daily Bible door: one calm card on the home page and a short page. Same colours and type as the rest of the site. */
+.dl-door {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 14px;
+  align-items: center;
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid var(--core-line);
+  border-radius: 16px;
+  background: var(--core-surface);
+}
+.os-app .dl-door h2 {
+  margin: 0 0 2px;
+  font-size: 22px;
+  line-height: 1.25;
+}
+.dl-door p {
+  margin: 0;
+  color: var(--core-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.dl-door .os-primary {
+  grid-column: 1 / -1;
+  justify-content: center;
+}
+.dl-meanwhile {
+  margin-top: 18px;
+}
+.dl-meanwhile h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.dl-back {
+  margin-top: 18px;
+}
+
+.dl-start {
+  margin-top: 16px;
+}
+.dl-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 14px 0;
+}
+.dl-size {
+  display: inline-flex;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.dl-size button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 48px;
+  min-height: 48px;
+  border: 1px solid var(--core-line);
+  border-radius: 12px;
+  background: var(--core-surface);
+  color: inherit;
+}
+.dl-size button:disabled {
+  opacity: 0.4;
+}
+.dl-text {
+  margin-top: 14px;
+  max-width: 34rem;
+  margin-inline: auto;
+}
+.dl-verses {
+  margin: 0 0 20px;
+}
+.dl-text p.dl-verse {
+  display: grid;
+  grid-template-columns: 1.9em 1fr;
+  column-gap: 4px;
+  align-items: baseline;
+  margin: 0;
+  padding: 0.5em 0;
+  font-family: var(--os-serif);
+  font-size: var(--dl-size, 22px);
+  line-height: 1.6;
+  border-bottom: 1px solid color-mix(in srgb, var(--core-line) 55%, transparent);
+}
+.dl-text p.dl-verse:last-child {
+  border-bottom: 0;
+}
+.dl-num {
+  justify-self: end;
+  padding-inline-end: 0.45em;
+  color: var(--os-accent, #895031);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: max(13px, 0.62em);
+  font-weight: 700;
+  line-height: 2.3;
+  font-variant-numeric: tabular-nums;
+}
+.dl-words {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dl-note {
+  display: block;
+  margin-top: 0.15em;
+  color: var(--core-muted);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: max(13px, 0.6em);
+  font-style: normal;
+  line-height: 1.45;
+}
+.dl-note::before {
+  content: "\2022 ";
+}
+.dl-text > p {
+  font-size: var(--dl-size, 22px);
+  line-height: 1.75;
+  margin: 0 0 16px;
+}
+.dl-text .dl-attribution {
+  color: var(--core-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.dl-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* The reading screen keeps its note short so the text starts high on a phone. */
+.dl-note {
+  padding-block: 8px;
+}
+.dl-note p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+/* The link to the academic section, under the chapter text. */
+.dl-academic {
+  margin: 18px 0 4px;
+}
+.dl-switch {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+/* Plans and today's reading */
+.dl-plans,
+.dl-today {
+  margin-top: 16px;
+}
+.dl-plans h2,
+.dl-today h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+.dl-plan {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  min-height: 56px;
+  margin-bottom: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--core-line);
+  border-radius: 14px;
+  background: var(--core-surface);
+  color: inherit;
+  font: inherit;
+  text-align: start;
+}
+.dl-plan span {
+  color: var(--core-muted);
+  font-size: 14px;
+}
+.dl-today-meta {
+  margin: -4px 0 10px;
+  color: var(--core-muted);
+  font-size: 14px;
+}
+.dl-share,
+.dl-change {
+  width: 100%;
+  margin-top: 10px;
+  justify-content: center;
+}
+.dl-part {
+  margin: 0 0 6px;
+  color: var(--core-muted);
+  font-size: 14px;
+}
+
+/* The pause before reading: one calm line, a bar that fills, Skip. */
+.dl-pause {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  min-height: 60dvh;
+  text-align: center;
+}
+.dl-pause-line {
+  margin: 0;
+  font-family: var(--core-serif, "Cormorant Garamond", Georgia, serif);
+  font-size: 34px;
+  line-height: 1.3;
+}
+.dl-pause-bar {
+  width: min(220px, 60vw);
+  height: 4px;
+  border-radius: 4px;
+  background: var(--core-line);
+  overflow: hidden;
+}
+.dl-pause-bar span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--core-accent, #895031);
+  transform-origin: left center;
+  animation: dl-pause-fill linear forwards;
+}
+@keyframes dl-pause-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dl-pause-bar span {
+    animation: none;
+  }
+}
+
+/* First visit: two big buttons. Banner on a study page reached from a link. */
+.dl-first {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid var(--core-line);
+  border-radius: 16px;
+  background: var(--core-surface);
+}
+.os-app .dl-first h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  line-height: 1.25;
+}
+.dl-first-buttons {
+  display: grid;
+  gap: 10px;
+}
+.dl-first-buttons button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  align-items: center;
+  min-height: 72px;
+  padding: 12px 14px;
+  border: 1px solid var(--core-line);
+  border-radius: 14px;
+  background: var(--core-bg, #f7f4ee);
+  color: inherit;
+  font: inherit;
+  text-align: start;
+}
+.dl-first-buttons button svg {
+  grid-row: 1 / span 2;
+  color: var(--core-accent, #895031);
+}
+.dl-first-buttons button span {
+  color: var(--core-muted);
+  font-size: 14px;
+}
+.dl-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--core-line);
+  border-inline-start: 4px solid var(--core-accent, #895031);
+  border-radius: 12px;
+  background: var(--core-surface);
+}
+.dl-banner p {
+  margin: 0;
+  font-size: 15px;
+}
+.dl-banner > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.dl-banner-close {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}

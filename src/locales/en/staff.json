@@ -1,0 +1,19 @@
+{
+  "title": "Church staff",
+  "churches": "Churches",
+  "signInTitle": "Sign in",
+  "signInIntro": "For the team that sets up churches.",
+  "email": "Email",
+  "password": "Password",
+  "signInButton": "Sign in",
+  "signingIn": "Signing in...",
+  "signInWrong": "The email or password is not right.",
+  "signInFailed": "We could not reach the sign-in service. Please try again.",
+  "signInUnavailable": "Sign-in is not set up on this copy of the site.",
+  "checkingAccess": "Checking your access...",
+  "accessError": "We could not check your access.",
+  "retry": "Try again",
+  "noAccess": "This account is not church staff. Ask the team to give you access.",
+  "signOut": "Sign out",
+  "signedInAs": "Signed in as {{email}}. Sign out"
+}

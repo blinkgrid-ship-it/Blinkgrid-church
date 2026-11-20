@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f4ee" />
+    <!-- A church's page: the title and the name are set by the app from the church's own settings (src/church). -->
+    <meta name="description" content="A daily Bible reading for your church." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <title>Daily Bible</title>
+    <!-- The first load shows warm paper, not white, until the site's own styles arrive. -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #f7f4ee;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

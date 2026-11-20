@@ -1,0 +1,23 @@
+{
+  "id": "ml-fixture-audio",
+  "language": "ml",
+  "textId": "ml-fixture",
+  "narrator": "Silence (synthetic fixture)",
+  "format": "mp3",
+  "timing": "segment",
+  "timingReview": "unreviewed",
+  "licence": {
+    "holder": "OriginalScript synthetic test fixture",
+    "reference": "e2e/fixtures/content — invented text, not a Bible translation",
+    "permits": [
+      "web-display",
+      "public-static-hosting",
+      "offline-cache"
+    ],
+    "attribution": {
+      "en": "SAMPLE — synthetic test fixture, not a Bible translation.",
+      "ml": "SAMPLE — പരീക്ഷണത്തിനുള്ള സാങ്കൽപ്പിക പാഠം."
+    },
+    "expires": "2099-12-31"
+  }
+}

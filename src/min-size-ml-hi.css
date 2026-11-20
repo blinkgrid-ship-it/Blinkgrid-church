@@ -1,0 +1,144 @@
+/* G-20 (Sir's UI directions B5): Malayalam and Hindi text is never smaller than 13px (English: 12px). Each rule below repeats a rule
+   from the site's stylesheets that sets a size, only for pages in Malayalam or Hindi, and takes the larger of 13px and the size the
+   rule already gives, so nothing gets smaller. It sits last so it wins. The five bottom-bar labels are the one exception: five
+   tabs of 64px on a 320px phone cannot hold Malayalam words at 13px, so Sir decides (see platform.css, "Five tabs in the bottom bar"). */
+
+html:lang(ml) .os-app .os-language,
+html:lang(hi) .os-app .os-language {
+  font-size: max(13px, 13px);
+}
+html:lang(ml) .os-back,
+html:lang(hi) .os-back {
+  font-size: max(13px, 14px);
+}
+html:lang(ml) .os-app .os-back,
+html:lang(hi) .os-app .os-back {
+  font-size: max(13px, 14px);
+}
+html:lang(ml) .os-pathway-eyebrow,
+html:lang(hi) .os-pathway-eyebrow {
+  font-size: max(13px, 12px);
+}
+html:lang(ml) .os-footer > span,
+html:lang(hi) .os-footer > span {
+  font-size: max(13px, 11px);
+}
+html:lang(ml) .os-testaments p,
+html:lang(hi) .os-testaments p {
+  font-size: max(13px, 13px);
+}
+html:lang(ml) .os-app .os-nc-entry small,
+html:lang(hi) .os-app .os-nc-entry small {
+  font-size: max(13px, 12.5px);
+}
+html:lang(ml) .os-app small,
+html:lang(hi) .os-app small {
+  font-size: max(13px, 13px);
+}
+html:lang(ml) .os-book-list .os-row > small,
+html:lang(hi) .os-book-list .os-row > small {
+  font-size: max(13px, 13px);
+}
+html:lang(ml) .os-edition,
+html:lang(hi) .os-edition {
+  font-size: max(13px, 12px);
+}
+html:lang(ml) .os-reader-chooser .os-chooser-field,
+html:lang(hi) .os-reader-chooser .os-chooser-field {
+  font-size: max(13px, 12px);
+}
+html:lang(ml) .os-reader-meta,
+html:lang(hi) .os-reader-meta {
+  font-size: max(13px, 12px);
+}
+html:lang(ml) .dn-beta,
+html:lang(hi) .dn-beta {
+  font-size: max(13px, 11px);
+}
+html:lang(ml) .os-academic-preview .os-study-lang,
+html:lang(hi) .os-academic-preview .os-study-lang {
+  font-size: max(13px, 12px);
+}
+html:lang(ml) .op-beta,
+html:lang(hi) .op-beta {
+  font-size: max(13px, 11px);
+}
+html:lang(ml) .op-badge,
+html:lang(hi) .op-badge {
+  font-size: max(13px, 11px);
+}
+html:lang(ml) .op-testament,
+html:lang(hi) .op-testament {
+  font-size: max(13px, 12px);
+}
+html:lang(ml) .os-app .fn-tag,
+html:lang(hi) .os-app .fn-tag {
+  font-size: max(13px, 0.8em);
+}
+html:lang(ml) .os-level p,
+html:lang(hi) .os-level p {
+  font-size: max(13px, 13px);
+}
+html:lang(ml) .os-app .sc-brand small,
+html:lang(hi) .os-app .sc-brand small {
+  font-size: max(13px, 12px);
+}
+html:lang(ml) .os-app .cs-badge,
+html:lang(hi) .os-app .cs-badge {
+  font-size: max(13px, 11.5px);
+}
+html:lang(ml) .ac-soon-tag,
+html:lang(hi) .ac-soon-tag {
+  font-size: max(13px, 10.5px);
+}
+html:lang(ml) .os-timeline time,
+html:lang(hi) .os-timeline time {
+  font-size: max(13px, 13px);
+}
+html:lang(ml) .os-fine,
+html:lang(hi) .os-fine {
+  font-size: max(13px, 12px);
+}
+
+@media (max-width: 760px) {
+  html:lang(ml) .os-app .os-language,
+  html:lang(hi) .os-app .os-language {
+    font-size: max(13px, 12px);
+  }
+  html:lang(ml) .os-app .os-back,
+  html:lang(hi) .os-app .os-back {
+    font-size: max(13px, 12px);
+  }
+  html:lang(ml) .os-footer > span,
+  html:lang(hi) .os-footer > span {
+    font-size: max(13px, 10px);
+  }
+  html:lang(ml) .os-testaments p,
+  html:lang(hi) .os-testaments p {
+    font-size: max(13px, 12px);
+  }
+  html:lang(ml) .os-book-list .os-row > small,
+  html:lang(hi) .os-book-list .os-row > small {
+    font-size: max(13px, 10px);
+  }
+  html:lang(ml) .os-reader-top .os-back,
+  html:lang(hi) .os-reader-top .os-back {
+    font-size: max(13px, 12px);
+  }
+  html:lang(ml) .os-edition,
+  html:lang(hi) .os-edition {
+    font-size: max(13px, 10px);
+  }
+  html:lang(ml) .os-reader-meta,
+  html:lang(hi) .os-reader-meta {
+    font-size: max(13px, 10px);
+  }
+  html:lang(ml) .os-level p,
+  html:lang(hi) .os-level p {
+    font-size: max(13px, 12px);
+  }
+  html:lang(ml) .os-timeline time,
+  html:lang(hi) .os-timeline time {
+    font-size: max(13px, 11px);
+  }
+}

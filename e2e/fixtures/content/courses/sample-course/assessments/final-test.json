@@ -1,0 +1,195 @@
+{
+  "id": "final-test",
+  "kind": "final",
+  "passMark": 75,
+  "timeLimitMinutes": 20,
+  "timeLimitPerItemSeconds": 60,
+  "attemptsAllowed": 5,
+  "cooldownHours": 0,
+  "shuffle": true,
+  "poolSize": 4,
+  "items": [
+    {
+      "id": "final-item-1",
+      "type": "single",
+      "stem": {
+        "en": "SAMPLE final question 1?",
+        "ml": "SAMPLE അന്തിമ ചോദ്യം 1?"
+      },
+      "competency": [
+        "fixture"
+      ],
+      "options": [
+        {
+          "text": {
+            "en": "SAMPLE option 1",
+            "ml": "SAMPLE ഓപ്ഷൻ 1"
+          },
+          "correct": true
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 2",
+            "ml": "SAMPLE ഓപ്ഷൻ 2"
+          },
+          "correct": false
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 3",
+            "ml": "SAMPLE ഓപ്ഷൻ 3"
+          },
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "final-item-2",
+      "type": "single",
+      "stem": {
+        "en": "SAMPLE final question 2?",
+        "ml": "SAMPLE അന്തിമ ചോദ്യം 2?"
+      },
+      "competency": [
+        "fixture"
+      ],
+      "options": [
+        {
+          "text": {
+            "en": "SAMPLE option 1",
+            "ml": "SAMPLE ഓപ്ഷൻ 1"
+          },
+          "correct": false
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 2",
+            "ml": "SAMPLE ഓപ്ഷൻ 2"
+          },
+          "correct": true
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 3",
+            "ml": "SAMPLE ഓപ്ഷൻ 3"
+          },
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "final-item-3",
+      "type": "single",
+      "stem": {
+        "en": "SAMPLE final question 3?",
+        "ml": "SAMPLE അന്തിമ ചോദ്യം 3?"
+      },
+      "competency": [
+        "fixture"
+      ],
+      "options": [
+        {
+          "text": {
+            "en": "SAMPLE option 1",
+            "ml": "SAMPLE ഓപ്ഷൻ 1"
+          },
+          "correct": false
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 2",
+            "ml": "SAMPLE ഓപ്ഷൻ 2"
+          },
+          "correct": false
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 3",
+            "ml": "SAMPLE ഓപ്ഷൻ 3"
+          },
+          "correct": true
+        }
+      ]
+    },
+    {
+      "id": "final-item-4",
+      "type": "single",
+      "stem": {
+        "en": "SAMPLE final question 4?",
+        "ml": "SAMPLE അന്തിമ ചോദ്യം 4?"
+      },
+      "competency": [
+        "fixture"
+      ],
+      "options": [
+        {
+          "text": {
+            "en": "SAMPLE option 1",
+            "ml": "SAMPLE ഓപ്ഷൻ 1"
+          },
+          "correct": true
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 2",
+            "ml": "SAMPLE ഓപ്ഷൻ 2"
+          },
+          "correct": false
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 3",
+            "ml": "SAMPLE ഓപ്ഷൻ 3"
+          },
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "final-item-5",
+      "type": "single",
+      "stem": {
+        "en": "SAMPLE final question 5?",
+        "ml": "SAMPLE അന്തിമ ചോദ്യം 5?"
+      },
+      "competency": [
+        "fixture"
+      ],
+      "options": [
+        {
+          "text": {
+            "en": "SAMPLE option 1",
+            "ml": "SAMPLE ഓപ്ഷൻ 1"
+          },
+          "correct": false
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 2",
+            "ml": "SAMPLE ഓപ്ഷൻ 2"
+          },
+          "correct": true
+        },
+        {
+          "text": {
+            "en": "SAMPLE option 3",
+            "ml": "SAMPLE ഓപ്ഷൻ 3"
+          },
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "final-item-short",
+      "type": "short",
+      "stem": {
+        "en": "SAMPLE short-answer question (hidden in practice mode).",
+        "ml": "SAMPLE ഹ്രസ്വ-ഉത്തര ചോദ്യം (പ്രാക്ടീസിൽ മറച്ചത്)."
+      },
+      "competency": [
+        "fixture"
+      ],
+      "rubric": "SAMPLE rubric: not graded on-device."
+    }
+  ]
+}

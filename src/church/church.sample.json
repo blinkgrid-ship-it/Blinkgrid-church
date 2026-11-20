@@ -1,0 +1,25 @@
+{
+  "name": "Sample Church",
+  "address": "church.example.org",
+  "logo": "/church/logo.svg",
+  "colors": {
+    "accent": "#1f5f4a",
+    "accentDark": "#8fd3b8"
+  },
+  "defaultLanguage": "ml",
+  "dailyText": {
+    "en": "sample-church-en",
+    "ml": "sample-church-ml"
+  },
+  "plans": [
+    {
+      "id": "sunday-psalms",
+      "title": { "en": "A Psalm a day", "ml": "ദിവസം ഒരു സങ്കീർത്തനം" },
+      "days": [
+        [{ "book": "psalms", "chapter": 1 }],
+        [{ "book": "psalms", "chapter": 23 }],
+        [{ "book": "psalms", "chapter": 119, "part": [1, 4] }]
+      ]
+    }
+  ]
+}

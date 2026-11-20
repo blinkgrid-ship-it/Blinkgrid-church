@@ -1,0 +1,125 @@
+{
+  "id": "sample-course",
+  "slug": "sample-course",
+  "title": {
+    "en": "SAMPLE — Foundations course",
+    "ml": "SAMPLE — അടിസ്ഥാന കോഴ്സ്"
+  },
+  "summary": {
+    "en": "SAMPLE course fixture for tests.",
+    "ml": "SAMPLE പരീക്ഷണ കോഴ്സ്."
+  },
+  "level": "1",
+  "notionalHours": 6,
+  "prerequisites": [],
+  "access": "free",
+  "status": "published",
+  "sample": true,
+  "licence": {
+    "holder": "OriginalScript synthetic test fixture",
+    "reference": "e2e/fixtures/content — invented text, not a Bible translation",
+    "permits": [
+      "web-display",
+      "public-static-hosting",
+      "offline-cache"
+    ],
+    "attribution": {
+      "en": "SAMPLE — synthetic test fixture, not a Bible translation.",
+      "ml": "SAMPLE — പരീക്ഷണത്തിനുള്ള സാങ്കൽപ്പിക പാഠം."
+    },
+    "expires": "2099-12-31"
+  },
+  "finalTestId": "final-test",
+  "modules": [
+    {
+      "id": "module-1",
+      "title": {
+        "en": "SAMPLE Module 1",
+        "ml": "SAMPLE മൊഡ്യൂൾ 1"
+      },
+      "objectives": [
+        {
+          "en": "Read the fixture passage.",
+          "ml": "ഫിക്സ്ചർ ഭാഗം വായിക്കുക."
+        }
+      ],
+      "classHours": 2,
+      "otherHours": 1,
+      "testId": "module-1-test",
+      "lessons": [
+        {
+          "id": "lesson-1-reading",
+          "kind": "reading",
+          "title": {
+            "en": "SAMPLE reading lesson",
+            "ml": "SAMPLE വായന പാഠം"
+          },
+          "passages": [
+            {
+              "book": "genesis",
+              "chapter": 1
+            }
+          ],
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "lesson-1-reflection",
+          "kind": "reflection",
+          "title": {
+            "en": "SAMPLE reflection lesson",
+            "ml": "SAMPLE ചിന്താ പാഠം"
+          },
+          "passages": [],
+          "body": {
+            "en": "SAMPLE reflection prompt.",
+            "ml": "SAMPLE ചിന്താ ചോദ്യം."
+          },
+          "estimatedMinutes": 10
+        }
+      ]
+    },
+    {
+      "id": "module-2",
+      "title": {
+        "en": "SAMPLE Module 2",
+        "ml": "SAMPLE മൊഡ്യൂൾ 2"
+      },
+      "objectives": [
+        {
+          "en": "Listen to the fixture audio.",
+          "ml": "ഫിക്സ്ചർ ഓഡിയോ കേൾക്കുക."
+        }
+      ],
+      "classHours": 2,
+      "otherHours": 1,
+      "testId": "module-2-test",
+      "lessons": [
+        {
+          "id": "lesson-2-listening",
+          "kind": "listening",
+          "title": {
+            "en": "SAMPLE listening lesson",
+            "ml": "SAMPLE കേൾവി പാഠം"
+          },
+          "passages": [
+            {
+              "book": "genesis",
+              "chapter": 1
+            }
+          ],
+          "estimatedMinutes": 15
+        },
+        {
+          "id": "lesson-2-video",
+          "kind": "video",
+          "title": {
+            "en": "SAMPLE video lesson",
+            "ml": "SAMPLE വീഡിയോ പാഠം"
+          },
+          "passages": [],
+          "estimatedMinutes": 15
+        }
+      ]
+    }
+  ]
+}

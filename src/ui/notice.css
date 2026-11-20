@@ -1,0 +1,147 @@
+/* Message colours, one set for the whole site (src/ui/Notice.tsx). Text, border and background are
+   chosen together so the words stay readable (at least 4.5 to 1; tests/notice-contrast.test.mjs checks
+   every pair, light and dark). Loading and empty messages are not notices: they stay quiet and grey. */
+:root {
+  --notice-error-fg: #8f1d18;
+  --notice-error-bg: #fdecea;
+  --notice-error-line: #c2413a;
+  --notice-warning-fg: #7a4a00;
+  --notice-warning-bg: #fff4dc;
+  --notice-warning-line: #c98a1b;
+  --notice-success-fg: #1e5e2e;
+  --notice-success-bg: #e7f5ea;
+  --notice-success-line: #3c8a4e;
+  --notice-info-fg: #174f8a;
+  --notice-info-bg: #e8f1fb;
+  --notice-info-line: #3b7cc4;
+}
+html[data-theme="dark"] {
+  --notice-error-fg: #ffb4ad;
+  --notice-error-bg: #3a1a18;
+  --notice-error-line: #e0675e;
+  --notice-warning-fg: #ffd58a;
+  --notice-warning-bg: #382a10;
+  --notice-warning-line: #d9a03a;
+  --notice-success-fg: #9fe0ad;
+  --notice-success-bg: #17301d;
+  --notice-success-line: #52a866;
+  --notice-info-fg: #a9cff5;
+  --notice-info-bg: #14283d;
+  --notice-info-line: #5b97d6;
+}
+
+.os-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--tone-line);
+  border-inline-start-width: 5px;
+  border-radius: 9px;
+  background: var(--tone-bg);
+  color: var(--tone-fg);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.os-notice--error {
+  --tone-fg: var(--notice-error-fg);
+  --tone-bg: var(--notice-error-bg);
+  --tone-line: var(--notice-error-line);
+}
+.os-notice--warning {
+  --tone-fg: var(--notice-warning-fg);
+  --tone-bg: var(--notice-warning-bg);
+  --tone-line: var(--notice-warning-line);
+}
+.os-notice--success {
+  --tone-fg: var(--notice-success-fg);
+  --tone-bg: var(--notice-success-bg);
+  --tone-line: var(--notice-success-line);
+}
+.os-notice--info {
+  --tone-fg: var(--notice-info-fg);
+  --tone-bg: var(--notice-info-bg);
+  --tone-line: var(--notice-info-line);
+}
+.os-notice-icon {
+  flex: none;
+  margin-top: 2px;
+}
+.os-notice-body {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.os-notice-body > :first-child {
+  margin-top: 0;
+}
+.os-notice-body > :last-child {
+  margin-bottom: 0;
+}
+.os-notice-body p {
+  margin: 0 0 8px;
+  color: inherit;
+}
+.os-notice a,
+.os-app .os-notice button:not(.os-primary) {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The pop-up at the bottom of the screen: the same boxes, floating. */
+.os-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  max-width: 620px;
+  width: calc(100% - 32px);
+  margin: 0;
+  box-shadow: 0 6px 30px #0003;
+}
+.os-toast .os-notice-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.os-app .os-toast button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  min-height: 40px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+/* A short message under a form field. */
+.os-field-error {
+  color: var(--notice-error-fg);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Short coloured text where a whole box would be too much (a "Saved" next to a button). */
+.os-app .os-text-success {
+  color: var(--notice-success-fg);
+  font-weight: 500;
+}
+.os-app .os-text-info {
+  color: var(--notice-info-fg);
+  font-weight: 500;
+}
+.os-app .os-text-warning {
+  color: var(--notice-warning-fg);
+  font-weight: 500;
+}
+.os-app .os-text-error {
+  color: var(--notice-error-fg);
+  font-weight: 500;
+}

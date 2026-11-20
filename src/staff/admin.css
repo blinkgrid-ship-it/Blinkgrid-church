@@ -1,0 +1,130 @@
+/* The admin area: sidebar on wide screens, a scrolling row of links on phones. Uses the site's tokens. */
+.os-admin { display: block; max-width: 72rem; margin: 0 auto; padding: 0 16px; }
+.os-admin-nav { border-bottom: 1px solid var(--core-line); padding: 12px 0 0; }
+.os-admin-title { margin: 0 0 4px; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--core-muted); }
+.os-admin-nav ul { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; overflow-x: auto; }
+.os-admin-nav a { display: block; min-height: 48px; line-height: 48px; padding: 0 14px; color: inherit; text-decoration: none; border-bottom: 3px solid transparent; white-space: nowrap; }
+.os-admin-nav a[aria-current="page"] { font-weight: 600; border-bottom-color: currentColor; }
+.os-admin-body { min-width: 0; }
+.os-admin-body .os-page { padding-left: 0; padding-right: 0; }
+@media (min-width: 900px) {
+  .os-admin { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 32px; padding-top: 24px; }
+  .os-admin-nav { border-bottom: 0; border-right: 1px solid var(--core-line); padding: 0 16px 0 0; }
+  .os-admin-nav ul { display: block; overflow: visible; }
+  .os-admin-nav a { min-height: 44px; line-height: 44px; padding: 0 12px; border-bottom: 0; border-left: 3px solid transparent; }
+  .os-admin-nav a[aria-current="page"] { border-left-color: currentColor; }
+}
+.os-admin-table { width: 100%; border-collapse: collapse; }
+.os-admin-table th, .os-admin-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--core-line); vertical-align: top; }
+.os-admin-scroll { overflow-x: auto; }
+.os-admin-report { margin: 16px 0; padding: 12px 16px; border: 1px solid var(--core-line); }
+.os-admin-report.has-errors { border-color: currentColor; }
+.os-admin-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 20px; }
+.os-admin-tabs button { min-height: 44px; }
+.os-admin-tabs button[aria-selected="true"], .os-admin-tabs button[aria-pressed="true"] { font-weight: 600; border-color: currentColor; }
+.os-admin-step { margin: 0 0 28px; padding: 0 0 8px; border-top: 1px solid var(--core-line); }
+.os-admin-step h2 { margin-top: 20px; }
+.os-admin-report h3, .os-admin-report h4 { margin: 12px 0 4px; }
+.os-admin-report li { margin: 6px 0; overflow-wrap: anywhere; }
+.os-admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 24px; }
+.os-admin-stats > div { border: 1px solid var(--core-line); padding: 12px 14px; }
+.os-admin-stats dt { font-size: 0.85rem; color: var(--core-muted); }
+.os-admin-stats dd { margin: 4px 0 0; font-size: 1.4rem; font-weight: 600; }
+.os-admin-bars { display: flex; align-items: flex-end; gap: 1px; height: 140px; border-bottom: 1px solid var(--core-line); margin: 8px 0; }
+.os-admin-bar { position: relative; display: block; flex: 1 1 0; min-width: 2px; background: var(--core-line); }
+.os-admin-bar i { position: absolute; left: 0; right: 0; bottom: 0; background: currentColor; opacity: 0.6; }
+.os-admin-legend { font-size: 0.85rem; color: var(--core-muted); margin: 0 0 24px; }
+.os-admin-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85rem; overflow-wrap: anywhere; }
+.os-admin-team-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin: 0 0 8px; }
+.os-admin-team-form .os-field { flex: 1 1 220px; }
+.os-admin-team-form button { min-height: 44px; }
+.os-admin-roles { list-style: none; margin: 0; padding: 0; }
+.os-admin-roles li { margin: 4px 0; overflow-wrap: anywhere; }
+.os-admin-roles button { min-height: 44px; margin-left: 8px; }
+
+/* Choice boxes in admin forms (AdminSelect): the site's Dropdown, full width and squared like the text boxes. */
+.os-field-select > span {
+  font-size: 14px;
+  font-weight: 500;
+}
+.os-field-dropdown {
+  display: block;
+}
+.os-app .os-field-dropdown .dd-button {
+  width: 100%;
+  border-radius: 8px;
+  min-height: 48px;
+  font-weight: 400;
+}
+.os-academic-navigation .os-field-select {
+  min-width: 145px;
+  flex: 1 1 145px;
+  margin-bottom: 0;
+}
+/* A long title (Malayalam, Hindi) wraps inside the sidebar and keeps its own height, instead of running over the page. */
+@media (min-width: 900px) {
+  .os-admin-nav a { line-height: 1.5; padding-block: 10px; white-space: normal; overflow-wrap: anywhere; }
+}
+
+/* Churches (T-137): a card per church on phones, the form in plain stacked fields. */
+.os-church-list { list-style: none; margin: 0 0 20px; padding: 0; }
+.os-church-list li { display: grid; gap: 4px; padding: 12px 0; border-bottom: 1px solid var(--core-line); }
+.os-church-list a { color: inherit; display: inline-block; min-height: 44px; line-height: 44px; overflow-wrap: anywhere; }
+.os-church-status { display: inline-block; justify-self: start; padding: 2px 10px; border: 1px solid var(--core-line); border-radius: 999px; font-size: 0.85rem; }
+.os-church-status.is-active { border-color: currentColor; font-weight: 600; }
+.os-church-form fieldset { border: 0; margin: 0 0 20px; padding: 0; min-width: 0; }
+.os-church-form legend { font-weight: 600; font-size: 1.05rem; padding: 0; margin: 0 0 4px; }
+.os-field-hint { margin: 0 0 10px; font-size: 0.9rem; color: var(--core-muted); }
+.os-field-error { margin: 4px 0 0; font-size: 0.9rem; color: #9b1c1c; }
+html[data-theme="dark"] .os-field-error { color: #ffb4b4; }
+.os-church-color { display: flex; align-items: center; gap: 10px; }
+.os-church-color input { flex: 1 1 auto; min-width: 0; }
+.os-church-swatch { flex: 0 0 auto; width: 44px; height: 44px; border: 1px solid var(--core-line); border-radius: 8px; }
+.os-church-address { display: flex; align-items: flex-end; gap: 8px; }
+.os-church-address .os-field { flex: 1 1 auto; min-width: 0; }
+.os-church-address button { flex: 0 0 auto; width: 48px; min-height: 48px; margin-bottom: 14px; }
+.os-church-form button, .os-church-status-panel button { min-height: 48px; }
+.os-church-error { color: #9b1c1c; }
+html[data-theme="dark"] .os-church-error { color: #ffb4b4; }
+.os-church-status-panel { margin: 28px 0 0; padding: 8px 0 0; border-top: 1px solid var(--core-line); }
+.os-church-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 12px; }
+.os-church-texts { margin: 28px 0 0; padding: 8px 0 0; border-top: 1px solid var(--core-line); }
+.os-church-texts h2 { margin: 0 0 4px; }
+.os-church-text { border: 0; margin: 0 0 20px; padding: 0; min-width: 0; }
+.os-church-text legend { font-weight: 600; padding: 0; margin: 0 0 4px; }
+.os-church-text textarea { width: 100%; box-sizing: border-box; min-height: 96px; font: inherit; }
+.os-church-text button { min-height: 48px; }
+.os-church-permission { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0; }
+.os-church-blocked { font-size: 0.9rem; color: #9b1c1c; }
+html[data-theme="dark"] .os-church-blocked { color: #ffb4b4; }
+.os-church-text .os-field-select, .os-church-text .os-field-dropdown { min-width: 0; max-width: 100%; }
+.os-church-text .os-field-select > span { overflow-wrap: anywhere; }
+.os-church-plan { margin: 28px 0 0; padding: 8px 0 0; border-top: 1px solid var(--core-line); }
+.os-church-plan h2 { margin: 0 0 4px; }
+.os-church-plan h3 { margin: 12px 0 6px; font-size: 1rem; }
+.os-church-plan-form { border: 0; margin: 0 0 8px; padding: 0; min-width: 0; }
+.os-church-plan-form legend { font-weight: 600; padding: 0; margin: 0 0 4px; }
+.os-church-plan-example { margin: 6px 0 12px; padding: 8px 10px; border: 1px solid var(--core-line); border-radius: 8px; font: 0.9rem/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.os-church-plan-text { width: 100%; box-sizing: border-box; min-height: 220px; font: 0.95rem/1.5 ui-monospace, Menlo, Consolas, monospace; }
+.os-church-plan button { min-height: 48px; }
+.os-church-plan-summary { margin: 4px 0 8px; }
+.os-church-plan-count { margin: 4px 0; font-weight: 600; }
+.os-church-plan-count.is-bad, .os-church-plan-problems { color: #9b1c1c; }
+html[data-theme="dark"] .os-church-plan-count.is-bad, html[data-theme="dark"] .os-church-plan-problems { color: #ffb4b4; }
+.os-church-plan-problems { margin: 4px 0 0; padding-left: 20px; overflow-wrap: anywhere; }
+.os-church-plan-problems li { margin: 0 0 6px; }
+.os-church-plan-preview ul { list-style: none; margin: 0 0 12px; padding: 0; }
+.os-church-plan-preview li { padding: 4px 0; overflow-wrap: anywhere; }
+.os-church-plan-gap { display: block; color: var(--core-muted, inherit); padding: 2px 0 6px; }
+
+.os-church-readers { margin: 28px 0 0; padding: 8px 0 0; border-top: 1px solid var(--core-line); }
+.os-church-readers h2 { margin: 0 0 4px; }
+.os-church-readers-total { margin: 8px 0; font-weight: 600; }
+.os-church-readers-empty { margin: 8px 0; color: var(--core-muted); }
+.os-church-readers-list { list-style: none; margin: 0 0 12px; padding: 0; }
+.os-church-readers-list li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) 3rem; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--core-line); }
+.os-church-readers-date { font-variant-numeric: tabular-nums; }
+.os-church-readers-list strong { text-align: right; font-variant-numeric: tabular-nums; }
+.os-church-readers-bar { display: block; height: 10px; border-radius: 5px; background: var(--core-line); overflow: hidden; }
+.os-church-readers-bar i { display: block; height: 100%; min-width: 2px; border-radius: 5px; background: var(--os-accent, currentColor); }
+.os-church-readers button { min-height: 48px; }

@@ -1,0 +1,42 @@
+# Render Blueprint for the church site (a static single-page app). One site for every church: the web address decides which church.
+services:
+  - type: web
+    name: blinkgrid-church-site
+    runtime: static
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # The church backend's Render address.
+      - key: VITE_API_URL
+        sync: false
+      # "api" asks the backend which church this address is. Leave it out only for local tests ("stub" uses test churches).
+      - key: VITE_CHURCH_RESOLVE
+        value: api
+    # Every route is handled by the app, so deep links and refreshes load index.html.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      # Keep church pages out of search engines until a church asks for it.
+      - path: /*
+        name: X-Robots-Tag
+        value: noindex, nofollow
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /index.html
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate

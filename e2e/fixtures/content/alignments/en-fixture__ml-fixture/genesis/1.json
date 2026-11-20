@@ -1,0 +1,120 @@
+{
+  "left": "en-fixture",
+  "right": "ml-fixture",
+  "book": "genesis",
+  "chapter": 1,
+  "verses": [
+    {
+      "leftVerse": "1",
+      "rightVerse": "1",
+      "leftHash": "sha1-834e6adbe33badb12de14849ea2398ebeae05359",
+      "rightHash": "sha1-f812ea83d61274160d0493a2eb8d2dfb6f031687",
+      "links": [
+        {
+          "id": "fixture-1-1-a",
+          "left": [
+            [
+              0,
+              14
+            ]
+          ],
+          "right": [
+            [
+              0,
+              15
+            ]
+          ],
+          "gloss": "sample fixture"
+        },
+        {
+          "id": "fixture-1-1-b",
+          "left": [
+            [
+              15,
+              20
+            ]
+          ],
+          "right": [
+            [
+              16,
+              22
+            ]
+          ],
+          "gloss": "verse"
+        },
+        {
+          "id": "fixture-1-1-c",
+          "left": [
+            [
+              21,
+              24
+            ]
+          ],
+          "right": [
+            [
+              23,
+              28
+            ]
+          ],
+          "gloss": "one"
+        }
+      ]
+    },
+    {
+      "leftVerse": "2",
+      "rightVerse": "2",
+      "leftHash": "sha1-e744a6cb7bcf2d9397907e23d2145635f0ed6ee4",
+      "rightHash": "sha1-cade4e99cfc0624fbcf306f8f02fb010fde4814f",
+      "links": [
+        {
+          "id": "fixture-1-2-a",
+          "left": [
+            [
+              0,
+              14
+            ]
+          ],
+          "right": [
+            [
+              0,
+              15
+            ]
+          ],
+          "gloss": "sample fixture"
+        },
+        {
+          "id": "fixture-1-2-b",
+          "left": [
+            [
+              15,
+              20
+            ]
+          ],
+          "right": [
+            [
+              16,
+              22
+            ]
+          ],
+          "gloss": "verse"
+        },
+        {
+          "id": "fixture-1-2-c",
+          "left": [
+            [
+              21,
+              24
+            ]
+          ],
+          "right": [
+            [
+              23,
+              28
+            ]
+          ],
+          "gloss": "two"
+        }
+      ]
+    }
+  ]
+}

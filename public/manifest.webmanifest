@@ -1,0 +1,17 @@
+{
+  "name": "Daily Bible",
+  "short_name": "Daily Bible",
+  "description": "A daily Bible reading for your church.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ee",
+  "theme_color": "#f7f4ee",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

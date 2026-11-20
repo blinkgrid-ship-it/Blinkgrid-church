@@ -1,0 +1,201 @@
+/* The site's dropdown (src/ui/Dropdown.tsx): a button that opens a rounded card of choices, and a
+   sheet from the bottom of the screen on a phone. */
+.dd {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+/* Beats the site-wide `.os-app button` box. */
+.os-app .dd-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0 14px 0 14px;
+  border: 1px solid var(--core-line);
+  border-radius: 999px;
+  background: var(--core-surface);
+  color: var(--core-ink);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.os-app .dd-button:hover {
+  border-color: var(--os-accent);
+}
+.os-app .dd-button[aria-expanded="true"] {
+  border-color: var(--os-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--os-accent) 22%, transparent);
+}
+.dd-button > svg:first-child {
+  color: var(--os-accent);
+}
+.dd-button > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dd-chevron {
+  margin-inline-start: auto;
+  color: var(--core-muted);
+  transition: transform 0.18s ease;
+}
+.dd-button[aria-expanded="true"] .dd-chevron {
+  transform: rotate(180deg);
+}
+
+/* A full-width box for forms and pickers (book, chapter, verse): looks like a form field. */
+.dd.dd-field {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.os-app .dd-field .dd-button {
+  width: 100%;
+  min-height: 50px;
+  justify-content: space-between;
+  border-radius: 10px;
+}
+.dd-field .dd-panel {
+  inset-inline-end: 0;
+}
+
+/* The card (desktop): under the button, or above it when there is no room below. */
+.dd-scrim,
+.dd-sheet-head {
+  display: none;
+}
+.dd-panel {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 48px));
+  padding: 6px;
+  border: 1px solid var(--core-line);
+  border-radius: 16px;
+  background: var(--core-surface);
+  box-shadow: 0 16px 40px rgba(20, 16, 10, 0.28), 0 2px 8px rgba(20, 16, 10, 0.12);
+  animation: dd-in 0.16s ease-out;
+}
+.dd-panel-up {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+.dd-list {
+  max-height: min(60dvh, 360px, var(--dd-room, 360px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.dd-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 46px;
+  padding: 0 12px;
+  border-radius: 11px;
+  color: var(--core-ink);
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+}
+.dd-option:hover,
+.dd-option:focus-visible {
+  background: var(--core-soft);
+}
+.dd-option[aria-selected="true"] {
+  background: color-mix(in srgb, var(--os-accent) 16%, transparent);
+  font-weight: 600;
+}
+.dd-option svg {
+  flex: none;
+  color: var(--os-accent);
+}
+
+/* A phone: the choices rise from the bottom as a sheet with the box's name on top, big tap targets,
+   and the page dimmed behind. Nothing can run off the screen. */
+@media (max-width: 640px) {
+  .dd-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    background: rgba(20, 16, 10, 0.5);
+    animation: dd-fade 0.16s ease-out;
+  }
+  .dd-panel,
+  .dd-panel-up {
+    position: fixed;
+    top: auto;
+    inset-inline: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 121;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    padding: 6px 8px 10px;
+    border-radius: 22px;
+    animation: dd-rise 0.22s ease-out;
+  }
+  .dd-sheet-head {
+    display: block;
+    margin: 0;
+    padding: 12px 12px 8px;
+    color: var(--core-muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .dd-list {
+    max-height: min(58dvh, 440px);
+  }
+  .dd-option {
+    min-height: 52px;
+    border-radius: 13px;
+  }
+}
+@keyframes dd-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dd-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dd-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dd-panel,
+  .dd-scrim {
+    animation: none;
+  }
+  .dd-chevron {
+    transition: none;
+  }
+}
