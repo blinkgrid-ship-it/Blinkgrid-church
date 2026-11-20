@@ -28,5 +28,13 @@
   "backToday": "आज के पाठ पर वापस जाएँ",
   "partNote": "इस अध्याय का भाग {{part}} / {{count}}",
   "takeAMoment": "एक पल ठहरें",
-  "skip": "छोड़ें"
+  "skip": "छोड़ें",
+  "autoScroll": "ऑटो-स्क्रॉल",
+  "autoScrollOn": "ऑटो-स्क्रॉल चालू है",
+  "autoScrollOff": "ऑटो-स्क्रॉल बंद है",
+  "autoScrollEnded": "अध्याय समाप्त हुआ। ऑटो-स्क्रॉल बंद है।",
+  "autoScrollSpeed": "स्क्रॉल की गति: {{speed}}। बदलने के लिए दबाएँ",
+  "speed_slow": "धीमी",
+  "speed_normal": "सामान्य",
+  "speed_fast": "तेज़"
 }

@@ -15,5 +15,6 @@
   "retry": "Try again",
   "noAccess": "This account is not church staff. Ask the team to give you access.",
   "signOut": "Sign out",
-  "signedInAs": "Signed in as {{email}}. Sign out"
+  "signedInAs": "Signed in as {{email}}. Sign out",
+  "testMode": "Test mode: no sign-in here. Churches you make are kept in this browser only."
 }

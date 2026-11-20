@@ -54,10 +54,32 @@ function SignInForm() {
   );
 }
 
+/**
+ * Test mode: only in the local dev server (`npm run dev`) with the test churches (VITE_CHURCH_RESOLVE=stub). The screens open with no sign-in, on churches kept in
+ * this browser. `import.meta.env.DEV` is false in every built site, so this code is removed from a real build and cannot be switched on there.
+ */
+const TEST_MODE = import.meta.env.DEV && import.meta.env.VITE_CHURCH_RESOLVE === "stub";
+
 function StaffGate() {
   const { t } = useUI();
   const { status, user, signOut } = useStaffAuth();
   const access = useLoadStaffAccess();
+  if (TEST_MODE)
+    return (
+      <StaffAccessContext.Provider value={{ state: "ready", manageChurches: true, retry: () => undefined }}>
+        <div className="os-admin">
+          <nav className="os-admin-nav" aria-label={t("staff:title")}>
+            <p className="os-admin-title">{t("staff:title")}</p>
+          </nav>
+          <div className="os-admin-body">
+            <Notice tone="warning">
+              <p>{t("staff:testMode")}</p>
+            </Notice>
+            <Outlet />
+          </div>
+        </div>
+      </StaffAccessContext.Provider>
+    );
   if (!staffSignInConfigured)
     return (
       <Page title={t("staff:title")}>

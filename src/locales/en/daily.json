@@ -28,5 +28,13 @@
   "backToday": "Back to today's reading",
   "partNote": "Part {{part}} of {{count}} of this chapter",
   "takeAMoment": "Take a moment",
-  "skip": "Skip"
+  "skip": "Skip",
+  "autoScroll": "Auto-scroll",
+  "autoScrollOn": "Auto-scroll is on",
+  "autoScrollOff": "Auto-scroll is off",
+  "autoScrollEnded": "The chapter has ended. Auto-scroll is off.",
+  "autoScrollSpeed": "Scrolling speed: {{speed}}. Press to change",
+  "speed_slow": "Slow",
+  "speed_normal": "Normal",
+  "speed_fast": "Fast"
 }

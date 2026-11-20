@@ -157,3 +157,55 @@ test("staff area: a signed-in account without the church staff role sees no chur
   await expect(page.getByText("This account is not church staff", { exact: false })).toBeVisible();
   await expect(page.getByRole("link", { name: /new church/i })).toHaveCount(0);
 });
+
+// ---- Auto-scroll switch in the Daily Bible reader ----
+const LONG = (n: number) => Array.from({ length: 90 }, (_, i) => ({ pk: i, verse: i + 1, text: `TEST verse ${i + 1} of chapter ${n}. The text goes on for a while so that every verse takes a few lines on a phone screen and the chapter is long. ` }));
+async function openLongChapter(page: Page, speed?: string) {
+  if (speed) await page.addInitScript((s) => localStorage.setItem("blinkgrid-church.daily.autoscroll-speed.v1", s), speed);
+  await page.route("https://bolls.life/get-text/**", (route) => route.fulfill({ json: LONG(1) }));
+  await page.goto(`/en/daily/read/john/1${CHURCH}`);
+  await expect(page.locator("[data-verse]")).toHaveCount(90);
+}
+const scrollY = (page: Page) => page.evaluate(() => Math.round(window.scrollY));
+
+test("auto-scroll: switched on it waits, then moves the page; switched off it stops", async ({ page }) => {
+  await openLongChapter(page, "fast");
+  const sw = page.getByRole("button", { name: "Auto-scroll" });
+  await expect(sw).toHaveAttribute("aria-pressed", "false");
+  await sw.click();
+  await expect(sw).toHaveAttribute("aria-pressed", "true");
+  await page.waitForTimeout(1200);
+  expect(await scrollY(page), "nothing moves during the first two seconds").toBe(0);
+  await page.waitForTimeout(3500);
+  const moved = await scrollY(page);
+  expect(moved).toBeGreaterThan(20);
+  await sw.click();
+  await expect(sw).toHaveAttribute("aria-pressed", "false");
+  const stoppedAt = await scrollY(page);
+  await page.waitForTimeout(1500);
+  expect(await scrollY(page), "after switching off the page stays where it is").toBe(stoppedAt);
+});
+
+test("auto-scroll: the reader's own hand takes over, and the speed button changes the pace", async ({ page }) => {
+  await openLongChapter(page, "fast");
+  const sw = page.getByRole("button", { name: "Auto-scroll" });
+  await sw.click();
+  await page.getByRole("button", { name: /Scrolling speed: Fast/ }).click();
+  await expect(page.getByRole("button", { name: /Scrolling speed: Slow/ })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("blinkgrid-church.daily.autoscroll-speed.v1"))).toBe("slow");
+  await page.mouse.wheel(0, 200);
+  await expect(sw).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("status").filter({ hasText: "Auto-scroll is off" })).toHaveCount(1);
+});
+
+test("auto-scroll: it is off when a chapter opens, and on a phone the button clears the bottom bar", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await openLongChapter(page);
+  const sw = page.getByRole("button", { name: "Auto-scroll" });
+  await expect(sw).toHaveAttribute("aria-pressed", "false");
+  const a = await sw.boundingBox();
+  const b = await page.locator(".os-bottom-nav").boundingBox();
+  expect(a && b && a.y + a.height <= b.y).toBe(true);
+  expect(a && a.x + a.width <= 320).toBe(true);
+  expect(await noOverflow(page)).toBe(true);
+});

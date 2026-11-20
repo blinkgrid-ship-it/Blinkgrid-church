@@ -312,3 +312,58 @@
   background: transparent;
   color: inherit;
 }
+
+/* Auto-scroll switch: a round button on the right, above the phone's bottom bar. */
+.dl-auto {
+  position: fixed;
+  right: 14px;
+  bottom: 24px;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.dl-auto-switch,
+.dl-auto-speed {
+  border: 1px solid var(--core-line);
+  background: var(--core-surface);
+  color: var(--core-green);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+.os-app .dl-auto-switch {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+.dl-auto-switch[aria-pressed="true"] {
+  background: var(--core-green);
+  border-color: var(--core-green);
+  color: #fffdf8;
+}
+.dl-auto-speed {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 22px;
+  font-size: 0.95rem;
+}
+.dl-auto-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .dl-auto {
+    bottom: calc(86px + env(safe-area-inset-bottom));
+  }
+}
+@media print {
+  .dl-auto {
+    display: none;
+  }
+}

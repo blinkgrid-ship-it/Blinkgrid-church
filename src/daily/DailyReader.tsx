@@ -13,6 +13,7 @@ import { dailyEdition, dailyTextIsStandIn } from "./config";
 import { DEFAULT_SIZE, SIZES, readSize, savePlace, saveSize } from "./resume";
 import { finishPause, shouldPause, skipPause } from "./pause";
 import { PauseScreen } from "./PauseScreen";
+import { AutoScrollSwitch } from "./AutoScrollSwitch";
 import "./daily.css";
 
 /**
@@ -233,6 +234,7 @@ export function DailyReader() {
               </nav>
             </article>
           )}
+          {data && data !== "missing" && <AutoScrollSwitch size={size || DEFAULT_SIZE} resetKey={`${book}/${number}/${params.get("part") ?? ""}`} />}
         </>
       )}
     </Page>
