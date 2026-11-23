@@ -7,17 +7,34 @@
 import { apiBase } from "../api/live";
 import { resolveChurch, safeSettings, type ChurchResult } from "./resolve";
 import { setChurchSettings } from "./settings";
+import { chooseHost } from "./testHost";
 import { addStandInCount, takeTurn, utcDay } from "./readerCount";
 
 const MODE = import.meta.env.VITE_CHURCH_RESOLVE as string | undefined;
 /** True when this address was looked up and is not an active church (unknown, inactive, or the church side is down): the site then shows only "Not available". */
 export let churchUnavailable = false;
 
+/** True only on a test site (built with VITE_ALLOW_TEST_HOST=1, or a stub build): it may be told which church to show with ?churchHost=. */
+export const ALLOW_TEST_HOST = MODE === "stub" || import.meta.env.VITE_ALLOW_TEST_HOST === "1";
+const REMEMBER_KEY = "blinkgrid-church.test-host";
+
 export function churchLookupHost(): string | null {
-  if (MODE !== "api" && MODE !== "stub") return null;
-  const asked = MODE === "stub" ? new URLSearchParams(window.location.search).get("churchHost") : null;
-  const host = (asked || window.location.hostname).toLowerCase();
-  return host;
+  let remembered: string | null = null;
+  try {
+    remembered = window.sessionStorage.getItem(REMEMBER_KEY);
+  } catch {
+    /* private window: the choice then lasts until the next reload */
+  }
+  const choice = chooseHost(MODE, ALLOW_TEST_HOST, window.location.search, window.location.hostname, remembered);
+  if (!choice) return null;
+  if (choice.remember) {
+    try {
+      window.sessionStorage.setItem(REMEMBER_KEY, choice.host);
+    } catch {
+      /* same */
+    }
+  }
+  return choice.host;
 }
 
 /** The address of the active church this visit belongs to. Null for OriginalScript itself, an unknown or inactive church, or the safe state: those are never counted. */

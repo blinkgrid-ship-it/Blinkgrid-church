@@ -62,6 +62,8 @@
   "churchNameIn": "Name in {{language}}",
   "churchAccent": "Accent colour, light theme",
   "churchStatusHeading": "Status",
+  "churchOpenPage": "Open this church's page (test site)",
+  "churchOpenPageNeedsActive": "Switch the church on to open its page.",
   "churchTextLine": "Line shown under the chapter",
   "churchesNone": "No church yet.",
   "churchTextLoadFailed": "Could not load the list of Bible texts.",

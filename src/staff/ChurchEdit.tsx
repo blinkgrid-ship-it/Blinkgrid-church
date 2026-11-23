@@ -9,6 +9,9 @@ import { toChurchError } from "./churchesStore.ts";
 import { ChurchTexts } from "./ChurchTexts";
 import { ChurchPlan } from "./ChurchPlan";
 import { ChurchReaders } from "./ChurchReaders";
+import { ALLOW_TEST_HOST } from "../church/churchStore";
+import { testChurchLink } from "../church/testHost";
+import { currentUrlLanguage } from "../lang/urlLanguage";
 import { ChurchApiError, LANGUAGES, checkInput, cleanInput, type ChurchInput, type ChurchRecord, type ChurchStatus, type Detail, type Language } from "./churchEdits";
 
 type T = (key: string, options?: Record<string, unknown>) => string;
@@ -48,6 +51,8 @@ export function ChurchEdit({ isNew = false }: { isNew?: boolean }) {
   /** Where the last answer belongs: under the Save button, or next to the status buttons. */
   const [where, setWhere] = useState<"form" | "status">("form");
   const [busy, setBusy] = useState(false);
+  // Only on a test site: a link that opens this church's page here, without a real address.
+  const testLink = testChurchLink(ALLOW_TEST_HOST, currentUrlLanguage(), church?.addresses[0]);
 
   useEffect(() => {
     if (isNew || !id) return;
@@ -293,6 +298,14 @@ export function ChurchEdit({ isNew = false }: { isNew?: boolean }) {
               {message}
             </p>
           )}
+          {testLink && church.status === "active" && (
+            <p>
+              <a className="os-secondary" href={testLink}>
+                {t("admin:churchOpenPage")}
+              </a>
+            </p>
+          )}
+          {testLink && church.status !== "active" && <p className="os-field-hint">{t("admin:churchOpenPageNeedsActive")}</p>}
           <p className="os-field-hint">{t("admin:churchSavedBy", { version: church.version, who: church.updatedBy })}</p>
         </section>
       )}

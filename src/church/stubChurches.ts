@@ -2,7 +2,11 @@
 // Switched on only by a build with VITE_CHURCH_RESOLVE=stub (the test site); a normal build never uses this file.
 // Everything here is labelled SAMPLE. The Bible codes are the open service's, so the Daily Bible can really be read on the test site.
 
-type StubAnswer = { status: number; body?: unknown; delayMs?: number };
+// Where the test staff screen keeps the churches and plans made in this browser (the same keys as src/staff/churchesStore.ts).
+const SAVED_CHURCHES_KEY = "blinkgrid-church.staff-churches-preview.v1";
+const SAVED_PLANS_KEY = "blinkgrid-church.staff-church-plans-preview.v1";
+
+type StubAnswer ={ status: number; body?: unknown; delayMs?: number };
 
 const active = {
   contractVersion: 1,
@@ -40,10 +44,46 @@ const STUBS: Record<string, StubAnswer> = {
   "server-error.church.test": { status: 503, body: { error: { code: "UNAVAILABLE", message: "Try later" } } },
 };
 
+const NOT_FOUND: StubAnswer = { status: 404, body: { error: { code: "CHURCH_NOT_FOUND", message: "No church for this address" } } };
+
+type SavedChurch = { id: string; name: Record<string, string>; colors: Record<string, string>; defaultLanguage: string; addresses: string[]; status: string; texts: Record<string, { editionCode: string }>; activePlanId: string | null };
+type SavedPlan = { id: string; version: number; title: Record<string, string>; days: unknown[] };
+
+/** A church made on the test staff screen (kept in this browser), answered the way the server would: only when it is active and has a plan. */
+export function savedChurchAnswer(host: string, read: (key: string) => string | null): StubAnswer | null {
+  try {
+    const churches: SavedChurch[] = JSON.parse(read(SAVED_CHURCHES_KEY) ?? "[]");
+    const plans: SavedPlan[] = JSON.parse(read(SAVED_PLANS_KEY) ?? "[]");
+    const c = churches.find((x) => x.addresses.some((a) => a.toLowerCase() === host));
+    if (!c) return null;
+    const plan = plans.find((p) => p.id === c.activePlanId);
+    if (c.status !== "active" || !plan) return NOT_FOUND;
+    return {
+      status: 200,
+      body: {
+        contractVersion: 1,
+        church: {
+          id: c.id,
+          name: c.name,
+          colors: c.colors,
+          defaultLanguage: c.defaultLanguage,
+          primaryAddress: c.addresses[0],
+          addresses: c.addresses,
+          dailyText: Object.fromEntries(Object.entries(c.texts).map(([lang, t]) => [lang, t.editionCode])),
+          plan: { id: plan.id, version: plan.version, title: plan.title, days: plan.days },
+        },
+      },
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** What the server would answer for this address (a plain 404 for any address the list does not know). */
 export function stubFetch(url: string): ReturnType<typeof fetch> {
   const host = new URL(url, "http://stub.invalid").searchParams.get("host") ?? "";
-  const hit = STUBS[host.toLowerCase()] ?? { status: 404, body: { error: { code: "CHURCH_NOT_FOUND", message: "No church for this address" } } };
+  const key = host.toLowerCase();
+  const hit = STUBS[key] ?? savedChurchAnswer(key, (k) => window.localStorage.getItem(k)) ?? { status: 404, body: { error: { code: "CHURCH_NOT_FOUND", message: "No church for this address" } } };
   const answer = () => new Response(JSON.stringify(hit.body ?? {}), { status: hit.status, headers: { "Content-Type": "application/json" } });
   return hit.delayMs ? new Promise((resolve) => setTimeout(() => resolve(answer()), hit.delayMs)) : Promise.resolve(answer());
 }

@@ -62,6 +62,8 @@
   "churchNameIn": "{{language}} में नाम",
   "churchAccent": "मुख्य रंग, लाइट थीम",
   "churchStatusHeading": "स्थिति",
+  "churchOpenPage": "इस चर्च का पेज खोलें (टेस्ट साइट)",
+  "churchOpenPageNeedsActive": "पेज खोलने के लिए चर्च को चालू करें।",
   "churchTextLine": "अध्याय के नीचे दिखने वाली पंक्ति",
   "churchesNone": "अभी कोई चर्च नहीं है।",
   "churchTextLoadFailed": "बाइबिल पाठों की सूची लोड नहीं हो सकी।",

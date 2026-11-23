@@ -33,11 +33,11 @@ function SignInForm() {
   return (
     <Page title={t("staff:signInTitle")} description={t("staff:signInIntro")}>
       <form onSubmit={submit} className="os-form" noValidate>
-        <label>
+        <label className="os-field">
           {t("staff:email")}
           <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
-        <label>
+        <label className="os-field">
           {t("staff:password")}
           <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
