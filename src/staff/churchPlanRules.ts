@@ -6,7 +6,18 @@
 import { LANGUAGES, type Detail, type Language } from "./churchEdits.ts";
 
 export type PlanReading = { book: string; chapter: number; part?: [number, number] };
-export type PlanInput = { title: Partial<Record<Language, string>>; days: PlanReading[][] };
+/**
+ * `startDate` (yyyy-mm-dd) is day 1 of the plan for the whole church; empty means each reader starts on the day they open the plan.
+ * `repeats`: the plan begins again after its last day. Both are saved by the server with the plan (and used there to say which day it is today).
+ */
+export type PlanInput = { title: Partial<Record<Language, string>>; days: PlanReading[][]; startDate?: string | null; repeats?: boolean };
+/** yyyy-mm-dd that is a real calendar day (2026-02-30 is not). */
+export function isRealDate(value: string): boolean {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!m) return false;
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3];
+}
 export type PlanRecord = PlanInput & { id: string; churchId: string; version: number; updatedBy: string; updatedAt: string };
 
 export const PLAN_MAX_DAYS = 366;
@@ -261,6 +272,7 @@ export function checkPlan(input: PlanInput): Detail[] {
   const title = cleanTitle(input.title);
   if (!Object.keys(title).length) problems.push({ field: "title", problem: "required" });
   for (const l of LANGUAGES) if ((title[l] ?? "").length > PLAN_TITLE_MAX) problems.push({ field: `title.${l}`, problem: "tooLong" });
+  if (input.startDate && !isRealDate(input.startDate)) problems.push({ field: "startDate", problem: "invalid" });
   if (!input.days.length) problems.push({ field: "days", problem: "required" });
   else if (input.days.length > PLAN_MAX_DAYS) problems.push({ field: "days", problem: "tooMany" });
   input.days.forEach((day, i) => {
@@ -295,6 +307,7 @@ export function dayOfProblem(details: Detail[]): number | undefined {
 
 /** The same plan twice? (title and days, whatever the spelling in the pasted text was.) */
 export const samePlan = (a: PlanInput, b: PlanInput): boolean => {
-  const flat = (p: PlanInput) => JSON.stringify([cleanTitle(p.title), p.days.map((d) => d.map((r) => [r.book, r.chapter, r.part?.[0] ?? 0, r.part?.[1] ?? 0]))]);
+  const flat = (p: PlanInput) =>
+    JSON.stringify([cleanTitle(p.title), p.days.map((d) => d.map((r) => [r.book, r.chapter, r.part?.[0] ?? 0, r.part?.[1] ?? 0])), p.startDate || null, !!p.repeats]);
   return flat(a) === flat(b);
 };

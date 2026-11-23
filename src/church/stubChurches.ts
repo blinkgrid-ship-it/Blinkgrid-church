@@ -6,6 +6,8 @@
 const SAVED_CHURCHES_KEY = "blinkgrid-church.staff-churches-preview.v1";
 const SAVED_PLANS_KEY = "blinkgrid-church.staff-church-plans-preview.v1";
 
+import { planToday } from "./planToday.ts";
+
 type StubAnswer ={ status: number; body?: unknown; delayMs?: number };
 
 const active = {
@@ -46,11 +48,11 @@ const STUBS: Record<string, StubAnswer> = {
 
 const NOT_FOUND: StubAnswer = { status: 404, body: { error: { code: "CHURCH_NOT_FOUND", message: "No church for this address" } } };
 
-type SavedChurch = { id: string; name: Record<string, string>; colors: Record<string, string>; defaultLanguage: string; addresses: string[]; status: string; texts: Record<string, { editionCode: string }>; activePlanId: string | null };
-type SavedPlan = { id: string; version: number; title: Record<string, string>; days: unknown[] };
+type SavedChurch = { id: string; timeZone?: string; name: Record<string, string>; colors: Record<string, string>; defaultLanguage: string; addresses: string[]; status: string; texts: Record<string, { editionCode: string }>; activePlanId: string | null };
+type SavedPlan = { id: string; version: number; title: Record<string, string>; days: unknown[]; startDate?: string | null; repeats?: boolean };
 
 /** A church made on the test staff screen (kept in this browser), answered the way the server would: only when it is active and has a plan. */
-export function savedChurchAnswer(host: string, read: (key: string) => string | null): StubAnswer | null {
+export function savedChurchAnswer(host: string, read: (key: string) => string | null, now: Date = new Date()): StubAnswer | null {
   try {
     const churches: SavedChurch[] = JSON.parse(read(SAVED_CHURCHES_KEY) ?? "[]");
     const plans: SavedPlan[] = JSON.parse(read(SAVED_PLANS_KEY) ?? "[]");
@@ -70,7 +72,17 @@ export function savedChurchAnswer(host: string, read: (key: string) => string | 
           primaryAddress: c.addresses[0],
           addresses: c.addresses,
           dailyText: Object.fromEntries(Object.entries(c.texts).map(([lang, t]) => [lang, t.editionCode])),
-          plan: { id: plan.id, version: plan.version, title: plan.title, days: plan.days },
+          timeZone: c.timeZone || "UTC",
+          // As the server does: a plan with a start date also says which day it is today in the church's time zone.
+          plan: {
+            id: plan.id,
+            version: plan.version,
+            title: plan.title,
+            days: plan.days,
+            startDate: plan.startDate || null,
+            repeats: !!plan.repeats,
+            ...(plan.startDate ? { today: planToday({ startDate: plan.startDate, repeats: !!plan.repeats, length: plan.days.length }, c.timeZone || "UTC", now) } : {}),
+          },
         },
       },
     };

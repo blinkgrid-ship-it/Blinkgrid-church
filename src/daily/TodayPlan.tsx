@@ -11,12 +11,23 @@ import { daysSince, readChosen, saveChosen, todayKey, type ChosenPlan } from "./
 import { shareCard } from "./shareCard";
 import "./daily.css";
 
+/** A plain date (yyyy-mm-dd) in the reader's language, the same day everywhere. */
+function dateText(day: string, language: string): string {
+  try {
+    return new Date(`${day}T00:00:00Z`).toLocaleDateString(language, { dateStyle: "long", timeZone: "UTC" });
+  } catch {
+    return day;
+  }
+}
+
 /** The starter plans and "Today's reading": chosen once, kept on this phone, with a picture to share on WhatsApp Status. */
 export function TodayPlan({ books }: { books: DailyBook[] }) {
   const { t, prefs } = useUI();
   const [chosen, setChosen] = useState<ChosenPlan | null>(readChosen);
   const [saved, setSaved] = useState<"" | "saved" | "failed">("");
-  const plan = planById(chosen?.planId);
+  // A plan with a start date is the whole church's plan: the server says which day it is today, so nobody picks or starts it themselves.
+  const scheduled = getPlans().find((p) => p.schedule);
+  const plan = scheduled ?? planById(chosen?.planId);
 
   const bookName = (slug: string) => {
     const book = books.find((b) => b.slug === slug);
@@ -35,7 +46,7 @@ export function TodayPlan({ books }: { books: DailyBook[] }) {
     setSaved("");
   };
 
-  if (!plan || !chosen)
+  if (!plan || (!scheduled && !chosen))
     return (
       <section className="dl-plans" aria-labelledby="dl-plans-title">
         <h2 id="dl-plans-title">{t("daily:choosePlan")}</h2>
@@ -48,8 +59,10 @@ export function TodayPlan({ books }: { books: DailyBook[] }) {
       </section>
     );
 
-  const index = Math.max(0, daysSince(chosen.start));
-  const today = plan.days[index];
+  const dayNumber = scheduled?.schedule?.today.dayNumber ?? null;
+  const index = scheduled ? (dayNumber ? dayNumber - 1 : -1) : Math.max(0, daysSince(chosen!.start));
+  const today = index >= 0 ? plan.days[index] : undefined;
+  const notStarted = !!scheduled?.schedule && scheduled.schedule.today.date < scheduled.schedule.startDate;
   return (
     <section className="dl-today" aria-labelledby="dl-today-title">
       <h2 id="dl-today-title">{t("daily:todayReading")}</h2>
@@ -95,14 +108,20 @@ export function TodayPlan({ books }: { books: DailyBook[] }) {
             </Notice>
           )}
         </>
+      ) : notStarted ? (
+        <Notice tone="info">
+          <p>{t("daily:planStarts", { date: dateText(scheduled!.schedule!.startDate, prefs.language) })}</p>
+        </Notice>
       ) : (
         <Notice tone="success">
           <p>{t("daily:planFinished")}</p>
         </Notice>
       )}
-      <button type="button" className="os-secondary dl-change" onClick={reset}>
-        {t("daily:changePlan")}
-      </button>
+      {!scheduled && (
+        <button type="button" className="os-secondary dl-change" onClick={reset}>
+          {t("daily:changePlan")}
+        </button>
+      )}
     </section>
   );
 }

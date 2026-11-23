@@ -51,7 +51,10 @@ export function churchFromAnswer(body: unknown, host: string): ChurchResult {
     ...(isObject(church.colors) ? { colors: church.colors } : {}),
     ...(defaultLanguage ? { defaultLanguage } : {}),
     ...(isObject(church.dailyText) ? { dailyText: church.dailyText } : {}),
-    ...(plan ? { plans: [{ id: plan.id, title: plan.title, days: plan.days }] } : {}),
+    // A plan with a start date arrives with the server's "today" (contract Part 4); it is passed on so the whole church reads the same day.
+    ...(plan
+      ? { plans: [{ id: plan.id, title: plan.title, days: plan.days, ...(typeof plan.startDate === "string" && isObject(plan.today) ? { schedule: { startDate: plan.startDate, repeats: plan.repeats, today: { date: plan.today.date, dayNumber: plan.today.dayNumber } } } : {}) }] }
+      : {}),
   };
   const { settings, problems } = parseChurchSettings(input, { remoteLogo: true });
   return { kind: "church", settings: { ...settings, names }, problems };

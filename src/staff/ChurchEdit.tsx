@@ -12,7 +12,7 @@ import { ChurchReaders } from "./ChurchReaders";
 import { ALLOW_TEST_HOST } from "../church/churchStore";
 import { testChurchLink } from "../church/testHost";
 import { currentUrlLanguage } from "../lang/urlLanguage";
-import { ChurchApiError, LANGUAGES, checkInput, cleanInput, type ChurchInput, type ChurchRecord, type ChurchStatus, type Detail, type Language } from "./churchEdits";
+import { ChurchApiError, DEFAULT_TIME_ZONE, LANGUAGES, TIME_ZONES, checkInput, cleanInput, type ChurchInput, type ChurchRecord, type ChurchStatus, type Detail, type Language } from "./churchEdits";
 
 type T = (key: string, options?: Record<string, unknown>) => string;
 
@@ -31,8 +31,15 @@ export function errorText(t: T, error: ChurchApiError): string {
   return t(`admin:churchErr${error.code}`);
 }
 
-const blank: ChurchInput = { name: {}, colors: {}, defaultLanguage: "en", addresses: [""] };
-const toInput = (c: ChurchRecord): ChurchInput => ({ name: { ...c.name }, colors: { ...c.colors }, defaultLanguage: c.defaultLanguage, addresses: c.addresses.length ? [...c.addresses] : [""] });
+const blank: ChurchInput = { name: {}, colors: {}, defaultLanguage: "en", addresses: [""], timeZone: DEFAULT_TIME_ZONE };
+// A church saved before time zones existed has none; the server counts that as UTC, so the form shows UTC until staff choose.
+const toInput = (c: ChurchRecord): ChurchInput => ({
+  name: { ...c.name },
+  colors: { ...c.colors },
+  defaultLanguage: c.defaultLanguage,
+  addresses: c.addresses.length ? [...c.addresses] : [""],
+  timeZone: c.timeZone || "UTC",
+});
 
 /** The form for one church: name per language, colours, default language, web addresses, and its status. New (`/staff/new`) or edit (`/staff/:id`). */
 export function ChurchEdit({ isNew = false }: { isNew?: boolean }) {
@@ -51,6 +58,8 @@ export function ChurchEdit({ isNew = false }: { isNew?: boolean }) {
   /** Where the last answer belongs: under the Save button, or next to the status buttons. */
   const [where, setWhere] = useState<"form" | "status">("form");
   const [busy, setBusy] = useState(false);
+  const zone = form.timeZone || DEFAULT_TIME_ZONE;
+  const zoneOptions = TIME_ZONES.some((z) => z.id === zone) ? TIME_ZONES.map((z) => ({ value: z.id, label: z.label })) : [...TIME_ZONES.map((z) => ({ value: z.id, label: z.label })), { value: zone, label: zone }];
   // Only on a test site: a link that opens this church's page here, without a real address.
   const testLink = testChurchLink(ALLOW_TEST_HOST, currentUrlLanguage(), church?.addresses[0]);
 
@@ -183,6 +192,15 @@ export function ChurchEdit({ isNew = false }: { isNew?: boolean }) {
             disabled={!canSave || busy}
           />
           {fieldError("defaultLanguage")}
+          <AdminSelect
+            label={t("admin:churchTimeZone")}
+            value={zone}
+            options={zoneOptions}
+            onChange={(value) => set({ timeZone: value })}
+            disabled={!canSave || busy}
+          />
+          <p className="os-field-hint">{t("admin:churchTimeZoneHint")}</p>
+          {fieldError("timeZone")}
         </fieldset>
 
         <fieldset disabled={!canSave || busy}>

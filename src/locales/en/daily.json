@@ -36,5 +36,6 @@
   "autoScrollSpeed": "Scrolling speed: {{speed}}. Press to change",
   "speed_slow": "Slow",
   "speed_normal": "Normal",
-  "speed_fast": "Fast"
+  "speed_fast": "Fast",
+  "planStarts": "This plan begins on {{date}}."
 }

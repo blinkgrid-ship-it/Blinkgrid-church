@@ -5,7 +5,25 @@
 // The admin panel will edit this same shape later. See docs/CHURCH-COPY.md.
 
 export type ChurchReading = { book: string; chapter: number; part?: [number, number] };
-export type ChurchPlan = { id: string; title: Record<string, string>; days: ChurchReading[][] };
+/**
+ * A plan with a start date is read by the whole church on the same day: the server says which day it is today (in the church's own time zone).
+ * `dayNumber` counts from 1; null means no reading today (the plan has not begun, or it ended and does not repeat).
+ */
+export type PlanSchedule = { startDate: string; repeats: boolean; today: { date: string; dayNumber: number | null } };
+export type ChurchPlan = { id: string; title: Record<string, string>; days: ChurchReading[][]; schedule?: PlanSchedule };
+
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+/** The schedule part of a plan, or undefined when it is missing or wrong (the plan then works as a plan without a start date). */
+export function parseSchedule(raw: unknown, length: number): PlanSchedule | undefined {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+  const s = raw as Record<string, unknown>;
+  const today = s.today && typeof s.today === "object" && !Array.isArray(s.today) ? (s.today as Record<string, unknown>) : undefined;
+  if (typeof s.startDate !== "string" || !DAY.test(s.startDate) || typeof s.repeats !== "boolean" || !today) return undefined;
+  if (typeof today.date !== "string" || !DAY.test(today.date)) return undefined;
+  const n = today.dayNumber;
+  if (n !== null && !(Number.isInteger(n) && (n as number) >= 1 && (n as number) <= length)) return undefined;
+  return { startDate: s.startDate, repeats: s.repeats, today: { date: today.date, dayNumber: n as number | null } };
+}
 export type ChurchSettings = {
   /** The name shown in the header and footer. */
   name: string;
@@ -121,7 +139,9 @@ export function parseChurchSettings(input: unknown, options: { remoteLogo?: bool
           if (readings.length) okDays.push(readings);
           else bad = true;
         }
-        if (id && /^[a-z0-9-]+$/i.test(id) && Object.keys(title).length && okDays.length && !bad) plans.push({ id, title, days: okDays });
+        const schedule = isObject(p) && p.schedule !== undefined ? parseSchedule(p.schedule, okDays.length) : undefined;
+        if (isObject(p) && p.schedule !== undefined && !schedule) problems.push(`plans[${i}].schedule is not valid; the plan is read without a start date`);
+        if (id && /^[a-z0-9-]+$/i.test(id) && Object.keys(title).length && okDays.length && !bad) plans.push({ id, title, days: okDays, ...(schedule ? { schedule } : {}) });
         else problems.push(`plans[${i}] needs an id, a title in at least one language, and days of readings (book, chapter and optional part)`);
       });
     } else problems.push("plans must be a list");

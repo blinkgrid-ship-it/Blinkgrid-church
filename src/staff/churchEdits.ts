@@ -26,6 +26,8 @@ export type ChurchRecord = {
   name: Partial<Record<Language, string>>;
   colors: { accent?: string; accentDark?: string };
   defaultLanguage: Language;
+  /** The church's time zone; a church saved before this existed has none (the server treats that as UTC). */
+  timeZone?: string;
   addresses: string[];
   status: ChurchStatus;
   /** Set on the Bible text screen (T-148); empty until then. */
@@ -43,7 +45,28 @@ export type ChurchInput = {
   colors: { accent?: string; accentDark?: string };
   defaultLanguage: Language;
   addresses: string[];
+  /** The church's time zone (an IANA name such as Asia/Kolkata). The day of a dated plan changes at midnight there. The server uses UTC when none is sent. */
+  timeZone?: string;
 };
+
+/** The zones the screen offers first; any other zone a church already has is kept and shown. */
+export const TIME_ZONES: { id: string; label: string }[] = [
+  { id: "Asia/Kolkata", label: "India (Asia/Kolkata)" },
+  { id: "Asia/Dubai", label: "UAE (Asia/Dubai)" },
+  { id: "Asia/Qatar", label: "Qatar (Asia/Qatar)" },
+  { id: "Asia/Kuwait", label: "Kuwait (Asia/Kuwait)" },
+  { id: "Asia/Singapore", label: "Singapore (Asia/Singapore)" },
+  { id: "Europe/London", label: "United Kingdom (Europe/London)" },
+  { id: "Europe/Berlin", label: "Central Europe (Europe/Berlin)" },
+  { id: "America/New_York", label: "US East (America/New_York)" },
+  { id: "America/Chicago", label: "US Central (America/Chicago)" },
+  { id: "America/Los_Angeles", label: "US West (America/Los_Angeles)" },
+  { id: "Australia/Sydney", label: "Australia East (Australia/Sydney)" },
+  { id: "UTC", label: "UTC" },
+];
+/** What a new church starts with: most churches here are in India. (The server's own default, used when nothing is sent, is UTC.) */
+export const DEFAULT_TIME_ZONE = "Asia/Kolkata";
+const TIME_ZONE = /^(?=.{1,64}$)[A-Za-z][A-Za-z0-9_+-]*(\/[A-Za-z0-9_+-]+){0,2}$/;
 
 /** The codes of contract Part 6 (the ones these screens meet). The screen words each one from the language files. */
 export type ErrorCode =
@@ -89,6 +112,7 @@ export function checkInput(input: ChurchInput): Detail[] {
   if (!names.some(([, v]) => v)) problems.push({ field: "name", problem: "required" });
   for (const [l, v] of names) if (v.length > 80) problems.push({ field: `name.${l}`, problem: "tooLong" });
   if (!LANGUAGES.includes(input.defaultLanguage)) problems.push({ field: "defaultLanguage", problem: "invalid" });
+  if (input.timeZone !== undefined && !TIME_ZONE.test(input.timeZone.trim())) problems.push({ field: "timeZone", problem: "invalid" });
   if (!input.addresses.length) problems.push({ field: "addresses", problem: "required" });
   const seen = new Set<string>();
   input.addresses.forEach((a, i) => {
@@ -114,7 +138,8 @@ export function cleanInput(input: ChurchInput): ChurchInput {
   const colors: ChurchInput["colors"] = {};
   if (input.colors.accent?.trim()) colors.accent = input.colors.accent.trim().toLowerCase();
   if (input.colors.accentDark?.trim()) colors.accentDark = input.colors.accentDark.trim().toLowerCase();
-  return { name, colors, defaultLanguage: input.defaultLanguage, addresses: input.addresses.map(normalizeAddress).filter(Boolean) };
+  const timeZone = input.timeZone?.trim();
+  return { name, colors, defaultLanguage: input.defaultLanguage, addresses: input.addresses.map(normalizeAddress).filter(Boolean), ...(timeZone ? { timeZone } : {}) };
 }
 
 export const statusAllows = (status: PermissionStatus) => status === "public-domain" || status === "permission-granted";

@@ -127,5 +127,11 @@
   "churchPermRefused": "Permission refused",
   "churchPermUnknown": "Not checked",
   "editChurch": "Edit church",
-  "newChurch": "New church"
+  "newChurch": "New church",
+  "churchTimeZone": "Time zone",
+  "churchTimeZoneHint": "The day of a dated reading plan changes at midnight in this time zone.",
+  "churchPlanStart": "First day of the plan",
+  "churchPlanStartHintSet": "Everyone reads the same day. Day 1 is this date.",
+  "churchPlanStartHintEmpty": "No date: each reader starts on the day they choose the plan. Choose a date so that everyone reads the same day.",
+  "churchPlanRepeats": "Start again after the last day"
 }

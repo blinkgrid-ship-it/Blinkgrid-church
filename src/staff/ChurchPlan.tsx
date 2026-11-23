@@ -32,6 +32,8 @@ export function ChurchPlan({ church, canSave, store, onChurch }: { church: Churc
   const [plan, setPlan] = useState<PlanRecord | null>(null);
   const [title, setTitle] = useState<Partial<Record<Language, string>>>({});
   const [text, setText] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [repeats, setRepeats] = useState(false);
   const [busy, setBusy] = useState(false);
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [titleProblems, setTitleProblems] = useState<Detail[]>([]);
@@ -47,6 +49,8 @@ export function ChurchPlan({ church, canSave, store, onChurch }: { church: Churc
         setPlan(found);
         setTitle(found?.title ?? {});
         setText(found ? formatPlan(found.days) : "");
+        setStartDate(found?.startDate ?? "");
+        setRepeats(found?.repeats ?? false);
         setState("ready");
       })
       .catch(() => live && setState("failed"));
@@ -60,7 +64,7 @@ export function ChurchPlan({ church, canSave, store, onChurch }: { church: Churc
   const typed = text.trim().length > 0;
   const days = parsed.days;
   const readable = typed && !parsed.problems.length;
-  const unchanged = !!plan && samePlan({ title, days }, plan) && readable;
+  const unchanged = !!plan && samePlan({ title, days, startDate, repeats }, plan) && readable;
 
   function edit(change: () => void) {
     change();
@@ -74,7 +78,7 @@ export function ChurchPlan({ church, canSave, store, onChurch }: { church: Churc
       setAnswer({ kind: "error", text: t(typed ? "admin:churchPlanFixLines" : "admin:churchPlanProblem_noDays") });
       return;
     }
-    const found = checkPlan({ title, days }).filter((d) => d.field.startsWith("title"));
+    const found = checkPlan({ title, days, startDate, repeats }).filter((d) => d.field.startsWith("title") || d.field === "startDate");
     if (found.length) {
       setTitleProblems(found);
       setAnswer({ kind: "error", text: t("admin:churchErrVALIDATION_FAILED") });
@@ -82,11 +86,13 @@ export function ChurchPlan({ church, canSave, store, onChurch }: { church: Churc
     }
     setBusy(true);
     try {
-      const saved = await store.savePlan(church, { title: cleanTitle(title), days }, plan);
+      const saved = await store.savePlan(church, { title: cleanTitle(title), days, startDate: startDate || null, repeats }, plan);
       onChurch(saved.church);
       setPlan(saved.plan);
       setTitle(saved.plan.title);
       setText(formatPlan(saved.plan.days));
+      setStartDate(saved.plan.startDate ?? "");
+      setRepeats(saved.plan.repeats ?? false);
       setAnswer({ kind: "ok", text: t("admin:churchPlanSaved") });
     } catch (e) {
       const err: ChurchApiError = toChurchError(e);
@@ -140,6 +146,22 @@ export function ChurchPlan({ church, canSave, store, onChurch }: { church: Churc
                 </label>
               );
             })}
+            <label className="os-field">
+              {t("admin:churchPlanStart")}
+              <input type="date" value={startDate} aria-invalid={!!titleProblem("startDate")} aria-describedby="church-plan-start-hint" onChange={(e) => edit(() => setStartDate(e.target.value))} />
+              {titleProblem("startDate") && (
+                <span className="os-field-error" role="alert">
+                  {t("admin:churchProblemInvalid")}
+                </span>
+              )}
+            </label>
+            <p id="church-plan-start-hint" className="os-field-hint">
+              {startDate ? t("admin:churchPlanStartHintSet") : t("admin:churchPlanStartHintEmpty")}
+            </p>
+            <label className="os-check">
+              <input type="checkbox" checked={repeats} onChange={(e) => edit(() => setRepeats(e.target.checked))} />
+              <span>{t("admin:churchPlanRepeats")}</span>
+            </label>
             <label className="os-field">
               {t("admin:churchPlanText")}
               <textarea

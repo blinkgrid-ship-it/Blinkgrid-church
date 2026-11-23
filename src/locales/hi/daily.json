@@ -36,5 +36,6 @@
   "autoScrollSpeed": "स्क्रॉल की गति: {{speed}}। बदलने के लिए दबाएँ",
   "speed_slow": "धीमी",
   "speed_normal": "सामान्य",
-  "speed_fast": "तेज़"
+  "speed_fast": "तेज़",
+  "planStarts": "यह योजना {{date}} से शुरू होगी।"
 }

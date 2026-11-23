@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { PLAN_BOOKS, findBook, parsePlan, formatPlan, formatDay, checkPlan, dayOfProblem, samePlan } from "../src/staff/churchPlanRules.ts";
+import { PLAN_BOOKS, findBook, parsePlan, formatPlan, formatDay, checkPlan, dayOfProblem, samePlan, isRealDate } from "../src/staff/churchPlanRules.ts";
 import { CANON } from "../src/daily/universal.ts";
 import { starterPlans } from "../src/daily/plans.ts";
 import { ChurchApiError, missingForSwitchOn } from "../src/staff/churchEdits.ts";
@@ -174,9 +174,48 @@ test("server store: reads the plan, saves it with POST then assigns it, then rep
     "GET /admin/churches/c1/texts",
     "PUT /admin/plans/p1",
   ]);
-  assert.deepEqual(seen[2][2], { title: { en: "Psalms and Mark" }, days });
+  // No date given: startDate goes as null (clears any date) and repeats as false.
+  assert.deepEqual(seen[2][2], { title: { en: "Psalms and Mark" }, days, startDate: null, repeats: false });
   assert.deepEqual(seen[3][2], { activePlanId: "p1", expectedVersion: 5 });
-  assert.deepEqual(seen[5][2], { title, days, expectedVersion: 1 });
+  assert.deepEqual(seen[5][2], { title, days, startDate: null, repeats: false, expectedVersion: 1 });
+});
+
+test("a plan's start date and repeat flag are checked, sent and read back", async () => {
+  assert.equal(isRealDate("2026-12-01"), true);
+  assert.equal(isRealDate("2026-02-30"), false);
+  assert.equal(isRealDate("1 Dec 2026"), false);
+  assert.deepEqual(checkPlan({ title, days, startDate: "2026-13-01" }).map((d) => d.field), ["startDate"]);
+  assert.deepEqual(checkPlan({ title, days, startDate: "2026-12-01", repeats: true }), []);
+  assert.deepEqual(checkPlan({ title, days, startDate: null }), []);
+  assert.equal(samePlan({ title, days, startDate: "2026-12-01" }, { title, days }), false); // a date alone is a change
+  assert.equal(samePlan({ title, days, repeats: true }, { title, days, repeats: false }), false);
+  assert.equal(samePlan({ title, days, startDate: "", repeats: false }, { title, days, startDate: null }), true);
+
+  const seen = [];
+  const request = async (method, path, body) => {
+    seen.push([method, path, body]);
+    if (method === "POST") return { plan: { id: "p1", churchId: "c1", title, days, version: 1, startDate: "2026-12-01", repeats: true } };
+    if (method === "GET" && path.endsWith("/plans")) return { items: [] };
+    if (method === "GET" && path.endsWith("/texts")) return { items: [] };
+    return { church: { id: "c1", version: 6, activePlanId: "p1" } };
+  };
+  const s = createApiChurchesStore(request);
+  const saved = await s.savePlan({ id: "c1", version: 5, activePlanId: null, texts: {} }, { title, days, startDate: "2026-12-01", repeats: true }, null);
+  assert.deepEqual(seen.find((x) => x[0] === "POST")[2], { title, days, startDate: "2026-12-01", repeats: true });
+  assert.equal(saved.plan.startDate, "2026-12-01");
+  assert.equal(saved.plan.repeats, true);
+  assert.equal(toPlan({ id: "p", version: 1, days: [[{ book: "mark", chapter: 1 }]], startDate: "nonsense" }).startDate, null); // a bad date from the server is ignored
+});
+
+test("browser stand-in keeps the start date and repeat flag", async () => {
+  const s = store();
+  const church = await newChurch(s);
+  const saved = await s.savePlan(church, { title, days, startDate: "2026-12-01", repeats: true }, null);
+  assert.equal(saved.plan.startDate, "2026-12-01");
+  assert.equal(saved.plan.repeats, true);
+  const read = await s.plan(saved.church);
+  assert.equal(read.startDate, "2026-12-01");
+  await fails(s.savePlan(saved.church, { title, days, startDate: "soon" }, saved.plan), "PLAN_INVALID");
 });
 
 test("server store: a plan made earlier but never assigned is written again, not duplicated", async () => {

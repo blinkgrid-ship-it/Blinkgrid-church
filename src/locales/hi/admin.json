@@ -127,5 +127,11 @@
   "churchPermRefused": "अनुमति नहीं मिली",
   "churchPermUnknown": "जाँच नहीं हुई",
   "editChurch": "चर्च बदलें",
-  "newChurch": "नया चर्च"
+  "newChurch": "नया चर्च",
+  "churchTimeZone": "समय क्षेत्र",
+  "churchTimeZoneHint": "तारीख वाली पठन योजना का दिन इस समय क्षेत्र की आधी रात को बदलता है।",
+  "churchPlanStart": "योजना का पहला दिन",
+  "churchPlanStartHintSet": "सब एक ही दिन का पाठ पढ़ेंगे। यही तारीख पहला दिन है।",
+  "churchPlanStartHintEmpty": "कोई तारीख नहीं: हर पाठक उस दिन से शुरू करता है जब वह योजना चुनता है। सब एक ही दिन पढ़ें, इसके लिए तारीख चुनें।",
+  "churchPlanRepeats": "आख़िरी दिन के बाद फिर से शुरू करें"
 }

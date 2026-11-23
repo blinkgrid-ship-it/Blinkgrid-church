@@ -16,7 +16,7 @@ import {
   type ErrorCode,
   type Language,
 } from "./churchEdits.ts";
-import { checkPlan, cleanTitle, type PlanInput, type PlanReading, type PlanRecord } from "./churchPlanRules.ts";
+import { checkPlan, cleanTitle, isRealDate, type PlanInput, type PlanReading, type PlanRecord } from "./churchPlanRules.ts";
 import { fillDays, standInCounts, type ReaderDay } from "../church/readerCount.ts";
 
 // Where the churches are kept. Two stores answer to the same interface: this file's stand-in, which keeps churches in THIS browser only
@@ -190,6 +190,8 @@ export function createLocalChurchesStore(storage: Memory, now: () => string = ()
         churchId: church.id,
         title: cleanTitle(input.title),
         days: input.days.map((d) => d.map((r) => ({ ...r }))),
+        startDate: input.startDate || null,
+        repeats: !!input.repeats,
         version: existing ? existing.version + 1 : 1,
         updatedBy: by,
         updatedAt: at,
@@ -263,7 +265,7 @@ export function createApiChurchesStore(request: Request): ChurchesStore {
   }
   const body = (input: ChurchInput) => {
     const c = cleanInput(input);
-    return { name: c.name, colors: c.colors, defaultLanguage: c.defaultLanguage, addresses: c.addresses };
+    return { name: c.name, colors: c.colors, defaultLanguage: c.defaultLanguage, addresses: c.addresses, ...(c.timeZone ? { timeZone: c.timeZone } : {}) };
   };
   return {
     kind: "server",
@@ -302,7 +304,8 @@ export function createApiChurchesStore(request: Request): ChurchesStore {
       return first ? toPlan(first) : null;
     },
     async savePlan(church, input, current) {
-      const body = { title: cleanTitle(input.title), days: input.days };
+      // startDate null clears a date; repeats is always sent so a ticked box that is later unticked is saved.
+      const body = { title: cleanTitle(input.title), days: input.days, startDate: input.startDate || null, repeats: !!input.repeats };
       // A plan made earlier but never assigned (the assign call failed) is written again, not duplicated.
       const existing = current ?? (await this.plan(church));
       const answer = existing
@@ -331,6 +334,8 @@ export function toPlan(raw: unknown): PlanRecord {
     churchId: typeof p.churchId === "string" ? p.churchId : "",
     title: p.title && typeof p.title === "object" ? p.title : {},
     days: p.days.map((d) => (Array.isArray(d) ? d.filter(reading) : [])),
+    startDate: typeof p.startDate === "string" && isRealDate(p.startDate) ? p.startDate : null,
+    repeats: p.repeats === true,
     version: p.version,
     updatedBy: typeof p.updatedBy === "string" ? p.updatedBy : "",
     updatedAt: typeof p.updatedAt === "string" ? p.updatedAt : "",

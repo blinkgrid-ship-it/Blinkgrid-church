@@ -1,10 +1,11 @@
 import type { MessageKey } from "../i18n";
+import type { PlanSchedule } from "../church/parse";
 
 // The three starter plans (Paul's brief, item 5; pick A for Sir). A plan is a list of days; a day is one or two readings;
 // a reading is a whole chapter, or one part of a chapter ("part 1 of 2"). Only chapters and parts are named here, never any
 // Bible words, so a church can change a plan without touching the text. A church's own list of readings replaces these (item 8).
 export type Reading = { book: string; chapter: number; part?: [number, number] };
-export type Plan = { id: string; title: MessageKey | Record<string, string>; days: Reading[][] };
+export type Plan = { id: string; title: MessageKey | Record<string, string>; days: Reading[][]; schedule?: PlanSchedule };
 
 const range = (n: number) => Array.from({ length: n }, (_, i) => i + 1);
 

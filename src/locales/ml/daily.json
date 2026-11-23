@@ -36,5 +36,6 @@
   "autoScrollSpeed": "സ്ക്രോൾ വേഗത: {{speed}}. മാറ്റാൻ അമർത്തുക",
   "speed_slow": "പതുക്കെ",
   "speed_normal": "സാധാരണ",
-  "speed_fast": "വേഗത്തിൽ"
+  "speed_fast": "വേഗത്തിൽ",
+  "planStarts": "ഈ പദ്ധതി {{date}}-ന് തുടങ്ങും."
 }
