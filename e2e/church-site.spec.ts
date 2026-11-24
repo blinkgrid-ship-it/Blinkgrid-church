@@ -36,6 +36,15 @@ const goTo = (page: Page, path: string) =>
     window.dispatchEvent(new PopStateEvent("popstate"));
   }, path);
 
+test("the site's own address (no church named) shows the normal Daily Bible, not Not available", async ({ page }) => {
+  await page.goto("/en/daily");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Daily Bible");
+  await expect(page.getByRole("heading", { name: "Not available here" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Start reading" })).toBeVisible();
+  expect(await page.locator("body").innerText()).not.toMatch(/Sample Church|originalscript/i);
+  expect(await noOverflow(page)).toBe(true);
+});
+
 test("the home address opens the Daily Bible, in the church's name", async ({ page }) => {
   await page.goto(`/en/${CHURCH}`);
   await expect(page).toHaveURL(/\/en\/daily$/);

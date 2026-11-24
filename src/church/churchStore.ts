@@ -7,7 +7,7 @@
 import { apiBase } from "../api/live";
 import { resolveChurch, safeSettings, type ChurchResult } from "./resolve";
 import { setChurchSettings } from "./settings";
-import { chooseHost } from "./testHost";
+import { chooseHost, MAIN_HOSTS } from "./testHost";
 import { addStandInCount, takeTurn, utcDay } from "./readerCount";
 
 const MODE = import.meta.env.VITE_CHURCH_RESOLVE as string | undefined;
@@ -18,23 +18,30 @@ export let churchUnavailable = false;
 export const ALLOW_TEST_HOST = MODE === "stub" || import.meta.env.VITE_ALLOW_TEST_HOST === "1";
 const REMEMBER_KEY = "blinkgrid-church.test-host";
 
+const MAIN_HOSTS_ALL = [...MAIN_HOSTS, ...String(import.meta.env.VITE_MAIN_HOSTS ?? "").split(",").map((h) => h.trim().toLowerCase()).filter(Boolean)];
+
+/** The address to look up, or null when this is not a church site at all or is the site itself (then the normal Daily Bible shows). */
 export function churchLookupHost(): string | null {
+  const choice = pickHost();
+  return choice && !choice.main ? choice.host : null;
+}
+
+function pickHost() {
   let remembered: string | null = null;
   try {
     remembered = window.sessionStorage.getItem(REMEMBER_KEY);
   } catch {
     /* private window: the choice then lasts until the next reload */
   }
-  const choice = chooseHost(MODE, ALLOW_TEST_HOST, window.location.search, window.location.hostname, remembered);
-  if (!choice) return null;
-  if (choice.remember) {
+  const choice = chooseHost(MODE, ALLOW_TEST_HOST, window.location.search, window.location.hostname, remembered, MAIN_HOSTS_ALL);
+  if (choice?.remember) {
     try {
       window.sessionStorage.setItem(REMEMBER_KEY, choice.host);
     } catch {
       /* same */
     }
   }
-  return choice.host;
+  return choice;
 }
 
 /** The address of the active church this visit belongs to. Null for OriginalScript itself, an unknown or inactive church, or the safe state: those are never counted. */
@@ -65,7 +72,15 @@ export function countReaderToday(): void {
 
 /** Settles the church for this visit. Never throws and never leaves the site without settings. */
 export async function initChurch(): Promise<ChurchResult | null> {
-  const host = churchLookupHost();
+  const choice = pickHost();
+  if (choice?.main) {
+    // The site itself (the main address, or a test site with no church named): the normal Daily Bible, no church, nothing counted.
+    setChurchSettings(safeSettings());
+    churchUnavailable = false;
+    countedHost = null;
+    return null;
+  }
+  const host = choice?.host;
   if (!host) return null;
   const url = `${apiBase}/api/v1/church/resolve?host=${encodeURIComponent(host)}`;
   const result = await resolveChurch(url, host, MODE === "stub" ? async (u) => (await import("./stubChurches")).stubFetch(u) : (u, init) => fetch(u, init));
