@@ -35,9 +35,9 @@ test("web addresses: typed forms are cleaned, a bad or repeated host is named by
   ]);
 });
 
-test("colours follow the parse.ts rules: readable with white text (light) and with dark text (dark)", () => {
-  assert.deepEqual(checkInput({ ...good(), colors: { accent: "#ffee00" } }), [{ field: "colors.accent", problem: "contrast" }]);
-  assert.deepEqual(checkInput({ ...good(), colors: { accentDark: "#222222" } }), [{ field: "colors.accentDark", problem: "contrast" }]);
+test("any #rrggbb colour is accepted in either theme; only a malformed one is refused", () => {
+  assert.deepEqual(checkInput({ ...good(), colors: { accent: "#ffee00" } }), []);
+  assert.deepEqual(checkInput({ ...good(), colors: { accentDark: "#222222" } }), []);
   assert.deepEqual(checkInput({ ...good(), colors: { accent: "1f5f4a" } }), [{ field: "colors.accent", problem: "contrast" }]);
   assert.deepEqual(checkInput({ ...good(), colors: {} }), []);
 });

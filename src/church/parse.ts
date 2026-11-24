@@ -96,14 +96,14 @@ export function parseChurchSettings(input: unknown, options: { remoteLogo?: bool
   if (input.colors !== undefined) {
     const c = isObject(input.colors) ? input.colors : {};
     const colors: NonNullable<ChurchSettings["colors"]> = {};
-    // The accent carries white button text in the light theme, and dark text in the dark theme: both must stay readable.
+    // Any #rrggbb colour is accepted as the church chose it (24 Nov: no readability check).
     if (c.accent !== undefined) {
-      if (typeof c.accent === "string" && HEX.test(c.accent) && contrast(c.accent, "#ffffff") >= 4.5) colors.accent = c.accent.toLowerCase();
-      else problems.push("colors.accent must be a #rrggbb colour dark enough for white text (contrast 4.5 to 1)");
+      if (typeof c.accent === "string" && HEX.test(c.accent)) colors.accent = c.accent.toLowerCase();
+      else problems.push("colors.accent must be a #rrggbb colour");
     }
     if (c.accentDark !== undefined) {
-      if (typeof c.accentDark === "string" && HEX.test(c.accentDark) && contrast(c.accentDark, "#241d17") >= 4.5) colors.accentDark = c.accentDark.toLowerCase();
-      else problems.push("colors.accentDark must be a #rrggbb colour light enough for dark text (contrast 4.5 to 1)");
+      if (typeof c.accentDark === "string" && HEX.test(c.accentDark)) colors.accentDark = c.accentDark.toLowerCase();
+      else problems.push("colors.accentDark must be a #rrggbb colour");
     }
     if (colors.accent || colors.accentDark) settings.colors = colors;
   }

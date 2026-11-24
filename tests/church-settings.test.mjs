@@ -37,8 +37,11 @@ test("anything that is not a settings file gives the defaults and never throws",
   }
 });
 
-test("a colour that cannot carry readable button text is refused and named", () => {
-  const { settings, problems } = parseChurchSettings({ name: "X", colors: { accent: "#ffee00", accentDark: "#101010" } });
+test("any #rrggbb colour is accepted as chosen; only a malformed colour is refused and named", () => {
+  const ok = parseChurchSettings({ name: "X", colors: { accent: "#ffee00", accentDark: "#101010" } });
+  assert.deepEqual(ok.settings.colors, { accent: "#ffee00", accentDark: "#101010" });
+  assert.equal(ok.problems.length, 0);
+  const { settings, problems } = parseChurchSettings({ name: "X", colors: { accent: "yellow", accentDark: "#12" } });
   assert.equal(settings.colors, undefined);
   assert.equal(problems.length, 2);
   assert.match(problems[0], /colors\.accent/);

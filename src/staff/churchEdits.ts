@@ -121,10 +121,10 @@ export function checkInput(input: ChurchInput): Detail[] {
     else if (seen.has(host)) problems.push({ field: `addresses.${i}`, problem: "duplicate" });
     seen.add(host);
   });
-  // Same rules as src/church/parse.ts: the accent carries white button text in the light theme, and dark text in the dark theme.
+  // Any #rrggbb colour is accepted (24 Nov: no readability check).
   const { accent, accentDark } = input.colors;
-  if (accent && !(HEX.test(accent) && contrast(accent, "#ffffff") >= 4.5)) problems.push({ field: "colors.accent", problem: "contrast" });
-  if (accentDark && !(HEX.test(accentDark) && contrast(accentDark, "#241d17") >= 4.5)) problems.push({ field: "colors.accentDark", problem: "contrast" });
+  if (accent && !HEX.test(accent)) problems.push({ field: "colors.accent", problem: "contrast" });
+  if (accentDark && !HEX.test(accentDark)) problems.push({ field: "colors.accentDark", problem: "contrast" });
   return problems;
 }
 

@@ -52,8 +52,8 @@ test("a wrong contract number, a missing name, or a broken answer is the safe st
   for (const bad of [null, "text", 5, [], {}]) assert.equal(churchFromAnswer(bad, "church.example.org").kind, "safe");
 });
 
-test("a broken part is not a broken church: a light colour and a bad plan are left out and the church stays", () => {
-  const r = churchFromAnswer(answer({ colors: { accent: "#ffee00" }, plan: { id: "p", title: { en: "x" }, days: [[{ book: "psalms", chapter: 0 }]] } }), "church.example.org");
+test("a broken part is not a broken church: a malformed colour and a bad plan are left out and the church stays", () => {
+  const r = churchFromAnswer(answer({ colors: { accent: "yellow" }, plan: { id: "p", title: { en: "x" }, days: [[{ book: "psalms", chapter: 0 }]] } }), "church.example.org");
   assert.equal(r.kind, "church");
   assert.equal(r.settings.colors, undefined); // default colours
   assert.equal(r.settings.plans, undefined); // the starter plans
