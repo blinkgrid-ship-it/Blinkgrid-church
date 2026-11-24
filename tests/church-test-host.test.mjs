@@ -50,3 +50,10 @@ test("a saved church that is not active, or has no plan, is a plain 404; an unsa
   assert.equal(savedChurchAnswer("my.church.example.org", reader(saved("active", null))).status, 404);
   assert.equal(savedChurchAnswer("other.org", reader(saved("active", "p1"))), null);
 });
+
+test("the staff area is always the site itself: a church remembered in this tab does not follow you back to it", () => {
+  assert.deepEqual(chooseHost("api", true, "", "site.onrender.com", "grace.example.org", undefined, "/en/staff/abc"), { host: "site.onrender.com", remember: false, main: true });
+  assert.deepEqual(chooseHost("api", true, "", "site.onrender.com", "grace.example.org", undefined, "/ml/staff"), { host: "site.onrender.com", remember: false, main: true });
+  // a church page still keeps its church
+  assert.deepEqual(chooseHost("api", true, "", "site.onrender.com", "grace.example.org", undefined, "/en/daily"), { host: "grace.example.org", remember: false, main: false });
+});

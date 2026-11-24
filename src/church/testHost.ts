@@ -20,11 +20,14 @@ export function chooseHost(
   hostname: string,
   remembered: string | null,
   mainHosts: readonly string[] = MAIN_HOSTS,
+  pathname = "",
 ): HostChoice | null {
   if (mode !== "api" && mode !== "stub") return null;
   const own = hostname.toLowerCase();
   const isMain = mainHosts.includes(own);
   if (mode === "api" && !allowTest) return { host: own, remember: false, main: isMain };
+  // The staff area belongs to the site itself, never to a church: coming back to it from a church page must not keep that church's look.
+  if (/^\/[a-z]{2}\/staff(\/|$)/i.test(pathname)) return { host: own, remember: false, main: true };
   const asked = new URLSearchParams(search).get("churchHost")?.trim().toLowerCase() || "";
   if (asked) return { host: asked, remember: true, main: false };
   // Stub builds never kept a choice; keep that. A test site on the real server keeps it for the tab.

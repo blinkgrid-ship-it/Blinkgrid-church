@@ -33,7 +33,7 @@ function pickHost() {
   } catch {
     /* private window: the choice then lasts until the next reload */
   }
-  const choice = chooseHost(MODE, ALLOW_TEST_HOST, window.location.search, window.location.hostname, remembered, MAIN_HOSTS_ALL);
+  const choice = chooseHost(MODE, ALLOW_TEST_HOST, window.location.search, window.location.hostname, remembered, MAIN_HOSTS_ALL, window.location.pathname);
   if (choice?.remember) {
     try {
       window.sessionStorage.setItem(REMEMBER_KEY, choice.host);
