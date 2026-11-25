@@ -5,6 +5,8 @@ import { DEFAULTS, parseChurchSettings, type ChurchSettings } from "./parse.ts";
 
 export const CONTRACT_VERSION = 1;
 export const RESOLVE_TIMEOUT_MS = 4000;
+/** A TEST site (built with VITE_ALLOW_TEST_HOST=1) runs on a free server that sleeps and takes about a minute to wake: it waits that long instead of showing "Not available". */
+export const TEST_RESOLVE_TIMEOUT_MS = 90000;
 
 export type SafeReason = "not-found" | "unreachable" | "timeout" | "server-error" | "broken-answer" | "wrong-version" | "wrong-address";
 export type ChurchResult =

@@ -98,3 +98,9 @@ test("resolve: no answer in time is the safe state, even when the request ignore
   const slow = () => new Promise((resolve) => setTimeout(() => resolve({ ok: true, status: 200, json: async () => answer() }), 600));
   assert.deepEqual(await ask(slow, 100), { kind: "safe", reason: "timeout" });
 });
+
+test("a real church site gives up after 4 seconds; a test site waits more than a minute for the free server to wake", async () => {
+  const { RESOLVE_TIMEOUT_MS, TEST_RESOLVE_TIMEOUT_MS } = await import("../src/church/resolve.ts");
+  assert.equal(RESOLVE_TIMEOUT_MS, 4000);
+  assert.ok(TEST_RESOLVE_TIMEOUT_MS > 60000);
+});

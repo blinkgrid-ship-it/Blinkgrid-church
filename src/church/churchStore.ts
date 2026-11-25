@@ -5,7 +5,7 @@
 // and originalscript.org itself never asks. Build values: "api" (ask the server) or "stub" (test data, src/church/stubChurches.ts;
 // the address to look up can be set with ?churchHost=active.church.test on the test site).
 import { apiBase } from "../api/live";
-import { resolveChurch, safeSettings, type ChurchResult } from "./resolve";
+import { resolveChurch, safeSettings, TEST_RESOLVE_TIMEOUT_MS, type ChurchResult } from "./resolve";
 import { setChurchSettings } from "./settings";
 import { chooseHost, MAIN_HOSTS } from "./testHost";
 import { addStandInCount, takeTurn, utcDay } from "./readerCount";
@@ -83,7 +83,22 @@ export async function initChurch(): Promise<ChurchResult | null> {
   const host = choice?.host;
   if (!host) return null;
   const url = `${apiBase}/api/v1/church/resolve?host=${encodeURIComponent(host)}`;
-  const result = await resolveChurch(url, host, MODE === "stub" ? async (u) => (await import("./stubChurches")).stubFetch(u) : (u, init) => fetch(u, init));
+  // Test site on the free server: wait for it to wake up (and say so on the blank page), instead of giving up after 4 seconds.
+  const waitsForServer = MODE === "api" && ALLOW_TEST_HOST;
+  const hint = waitsForServer
+    ? window.setTimeout(() => {
+        const root = document.getElementById("root");
+        if (root && !root.childElementCount)
+          root.innerHTML = '<p style="font:16px Inter,system-ui,sans-serif;color:#5c534a;text-align:center;margin:30vh 24px 0">Waking up the test server&hellip; this can take up to a minute on the free plan.</p>';
+      }, 3000)
+    : undefined;
+  const result = await resolveChurch(
+    url,
+    host,
+    MODE === "stub" ? async (u) => (await import("./stubChurches")).stubFetch(u) : (u, init) => fetch(u, init),
+    waitsForServer ? TEST_RESOLVE_TIMEOUT_MS : undefined,
+  );
+  if (hint !== undefined) window.clearTimeout(hint);
   // No copy is kept between visits or addresses: a failed call is the plain OriginalScript page, never an old church (contract Part 7).
   setChurchSettings(result.kind === "church" ? result.settings : safeSettings());
   churchUnavailable = result.kind !== "church";
