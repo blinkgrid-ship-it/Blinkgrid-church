@@ -41,7 +41,57 @@ export type ChurchSettings = {
   dailyText: Record<string, string>;
   /** This church's own reading plans. When present they replace the three starter plans. */
   plans?: ChurchPlan[];
+  /** Where the church takes gifts: its own giving page and/or its bank details. This site only SHOWS them; no payment goes through it. */
+  giving?: ChurchGiving;
 };
+
+/** The bank details a church may show. Every field is optional text. */
+export const BANK_FIELDS = ["accountName", "bankName", "branch", "accountNumber", "ifsc", "swift", "upi"] as const;
+export type BankField = (typeof BANK_FIELDS)[number];
+export type ChurchGiving = {
+  /** The church's own giving page (an https address). */
+  link?: string;
+  bank?: Partial<Record<BankField, string>>;
+  /** A short line from the church, shown under the details. */
+  note?: string;
+  /** True for made-up demo details on a test site, so the page says so. */
+  sample?: boolean;
+};
+
+/** The giving part of the settings, or undefined when it has nothing usable. A bad part is dropped and named in `problems`. */
+export function parseGiving(raw: unknown, problems: string[] = []): ChurchGiving | undefined {
+  if (!isObject(raw)) {
+    if (raw !== undefined) problems.push("giving must be an object");
+    return undefined;
+  }
+  const giving: ChurchGiving = {};
+  const link = text(raw.link);
+  if (raw.link !== undefined) {
+    // Only an https address: never javascript: or a plain http page.
+    let ok = false;
+    try {
+      const u = new URL(link ?? "");
+      ok = u.protocol === "https:" && !u.username && !u.password && link!.length <= 500;
+    } catch {
+      ok = false;
+    }
+    if (ok) giving.link = link;
+    else problems.push("giving.link must be an https address");
+  }
+  if (isObject(raw.bank)) {
+    const bank: Partial<Record<BankField, string>> = {};
+    for (const key of BANK_FIELDS) {
+      const value = text(raw.bank[key]);
+      if (value && value.length <= 120) bank[key] = value;
+      else if (raw.bank[key] !== undefined) problems.push(`giving.bank.${key} must be short text`);
+    }
+    if (Object.keys(bank).length) giving.bank = bank;
+  } else if (raw.bank !== undefined) problems.push("giving.bank must be an object");
+  const note = text(raw.note);
+  if (note && note.length <= 300) giving.note = note;
+  if (raw.sample === true) giving.sample = true;
+  return giving.link || giving.bank ? giving : undefined;
+}
 
 export const DEFAULTS: ChurchSettings = {
   name: "Daily Bible",
@@ -115,6 +165,11 @@ export function parseChurchSettings(input: unknown, options: { remoteLogo?: bool
         else problems.push(`dailyText.${lang} must be an edition code for en, ml or hi`);
       }
     } else problems.push("dailyText must list an edition code per language");
+  }
+
+  if (input.giving !== undefined) {
+    const giving = parseGiving(input.giving, problems);
+    if (giving) settings.giving = giving;
   }
 
   if (input.plans !== undefined) {

@@ -14,7 +14,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { BookOpen, Check, ChevronDown, ChevronRight, Languages, Menu, Minus, Moon, Plus, ShieldCheck, Sun, X } from "lucide-react";
+import { BookOpen, Check, ChevronDown, ChevronRight, HandHeart, Languages, Menu, Minus, Moon, Plus, ShieldCheck, Sun, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import i18n, { hasInterface, isRtl } from "./i18n";
@@ -31,6 +31,7 @@ import { LANGUAGE_NAMES, PREFERENCES_KEY, currentUrlLanguage, openInLanguage, ty
 
 const NotAvailableHere = lazy(() => import("./church/ChurchPages").then((m) => ({ default: m.NotAvailableHere })));
 const ChurchMore = lazy(() => import("./church/ChurchPages").then((m) => ({ default: m.ChurchMore })));
+const GivingPage = lazy(() => import("./church/GivingPage").then((m) => ({ default: m.GivingPage })));
 const DailyReader = lazy(() => import("./daily/DailyReader").then((m) => ({ default: m.DailyReader })));
 const StaffLayout = lazy(() => import("./staff/StaffLayout").then((m) => ({ default: m.StaffLayout })));
 const StaffChurches = lazy(() => import("./staff/Churches").then((m) => ({ default: m.AdminChurches })));
@@ -351,6 +352,8 @@ export default function Platform() {
 
   const nav = [
     { to: CHURCH_HOME, label: "daily:title", icon: BookOpen },
+    // The Giving tab shows only for a church that has given its giving link or bank details (or SAMPLE ones on a test site).
+    ...(churchSettings.giving ? [{ to: "/give", label: "common:giving", icon: HandHeart }] : []),
     { to: "/more", label: "common:more", icon: Menu },
   ];
   // An address that is not the church's own shows "Not available here"; the home address opens the Daily Bible.
@@ -408,6 +411,7 @@ export default function Platform() {
                   <Route path="/daily/read/:book/:chapter" element={<DailyReader />} />
                   <Route path="/settings" element={<PreferencesPage />} />
                   <Route path="/more" element={<ChurchMore />} />
+                  <Route path="/give" element={<GivingPage />} />
                   <Route path="*" element={<NotAvailableHere />} />
                 </Routes>
               )}

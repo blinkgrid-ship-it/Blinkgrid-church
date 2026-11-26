@@ -5,7 +5,7 @@ import { churchPathRule, CHURCH_PAGES, CHURCH_HOME } from "../src/church/feature
 // What a church's site shows. Only the church's own pages are let through (no Donate page in November); every other address is blocked.
 
 test("the church's own pages are shown", () => {
-  for (const path of ["/daily", "/daily/read/john/3", "/settings", "/more"]) assert.equal(churchPathRule(path), "allow", path);
+  for (const path of ["/daily", "/daily/read/john/3", "/settings", "/more", "/give"]) assert.equal(churchPathRule(path), "allow", path);
   assert.equal(CHURCH_HOME, "/daily");
   assert.ok(CHURCH_PAGES.includes("/daily") && !CHURCH_PAGES.includes("/donate"));
 });
@@ -37,4 +37,9 @@ test("capital letters, repeated slashes and a trailing slash do not get past the
 
 test("a page that only starts with the same letters is not let through", () => {
   for (const path of ["/dailybook", "/donated", "/settings-old", "/morestuff"]) assert.equal(churchPathRule(path), "block", path);
+});
+
+test("the Giving page (/give) is one of the church's pages", () => {
+  assert.equal(churchPathRule("/give"), "allow");
+  assert.ok(CHURCH_PAGES.includes("/give"));
 });

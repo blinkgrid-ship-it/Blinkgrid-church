@@ -7,6 +7,7 @@
 import { apiBase } from "../api/live";
 import { resolveChurch, safeSettings, TEST_RESOLVE_TIMEOUT_MS, type ChurchResult } from "./resolve";
 import { setChurchSettings } from "./settings";
+import { demoGiving } from "./demoGiving";
 import { chooseHost, MAIN_HOSTS } from "./testHost";
 import { addStandInCount, takeTurn, utcDay } from "./readerCount";
 
@@ -100,7 +101,9 @@ export async function initChurch(): Promise<ChurchResult | null> {
   );
   if (hint !== undefined) window.clearTimeout(hint);
   // No copy is kept between visits or addresses: a failed call is the plain OriginalScript page, never an old church (contract Part 7).
-  setChurchSettings(result.kind === "church" ? result.settings : safeSettings());
+  // A test site shows SAMPLE giving details for a church that has none yet (the server has no field for them), so the Giving page can be seen.
+  const withDemoGiving = ALLOW_TEST_HOST && result.kind === "church" && !result.settings.giving;
+  setChurchSettings(result.kind === "church" ? (withDemoGiving ? { ...result.settings, giving: demoGiving() } : result.settings) : safeSettings());
   churchUnavailable = result.kind !== "church";
   countedHost = result.kind === "church" ? host : null;
   if (result.kind === "church" && result.problems.length) console.warn("church:", result.problems.join("; "));

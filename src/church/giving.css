@@ -1,0 +1,86 @@
+/* The Giving page: the church's own link and bank details. Phone first: one column, 44px+ touch targets. */
+.os-app .give-card {
+  margin: 0 0 16px;
+  padding: 16px;
+  background: var(--core-surface);
+  border: 1px solid var(--core-line);
+  border-radius: 12px;
+}
+.os-app .give-card h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+.os-app .give-online {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+.os-app .give-hint,
+.os-app .give-fine,
+.os-app .give-empty {
+  margin: 10px 0 0;
+  color: var(--core-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.os-app .give-note {
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+.os-app .give-list {
+  margin: 0;
+}
+.os-app .give-row {
+  padding: 12px 0;
+  border-top: 1px solid var(--core-line);
+}
+.os-app .give-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.os-app .give-row dt {
+  margin: 0 0 4px;
+  color: var(--core-muted);
+  font-size: 13px;
+}
+.os-app .give-row dd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+.os-app .give-value {
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.os-app .give-copy {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--core-ink);
+  background: transparent;
+  border: 1.5px solid var(--core-line);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.os-app .give-copy:focus-visible,
+.os-app .give-online:focus-visible {
+  outline: 2px solid var(--core-focus);
+  outline-offset: 2px;
+}
