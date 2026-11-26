@@ -4,6 +4,9 @@
 name: keep-awake
 
 on:
+  push:
+    paths:
+      - ".github/workflows/keep-awake.yml"
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
