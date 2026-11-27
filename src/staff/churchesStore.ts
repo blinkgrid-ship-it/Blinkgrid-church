@@ -135,7 +135,8 @@ export function createLocalChurchesStore(storage: Memory, now: () => string = ()
       const row = find(rows, id);
       stale(row, expectedVersion);
       const mine = guard(rows, input, id);
-      const next: ChurchRecord = { ...row, ...mine, version: row.version + 1, updatedBy: by, updatedAt: now() };
+      // `giving` is set again from the form, so unticking it removes the Giving page.
+      const next: ChurchRecord = { ...row, ...mine, giving: mine.giving, version: row.version + 1, updatedBy: by, updatedAt: now() };
       write(rows.map((r) => (r.id === id ? next : r)));
       return next;
     },
@@ -265,7 +266,7 @@ export function createApiChurchesStore(request: Request): ChurchesStore {
   }
   const body = (input: ChurchInput) => {
     const c = cleanInput(input);
-    return { name: c.name, colors: c.colors, defaultLanguage: c.defaultLanguage, addresses: c.addresses, ...(c.timeZone ? { timeZone: c.timeZone } : {}) };
+    return { name: c.name, colors: c.colors, defaultLanguage: c.defaultLanguage, addresses: c.addresses, ...(c.timeZone ? { timeZone: c.timeZone } : {}), ...(c.giving ? { giving: c.giving } : {}) };
   };
   return {
     kind: "server",

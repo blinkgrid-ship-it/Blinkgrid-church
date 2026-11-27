@@ -268,3 +268,38 @@ test("server store: TEXT_NOT_PERMITTED from the server reaches the screen as tha
   });
   await assert.rejects(s.setText("c1", "en", kjv, 1), (e) => e instanceof ChurchApiError && e.code === "TEXT_NOT_PERMITTED");
 });
+
+// Optional giving details on the staff form (27 Nov).
+import { checkGiving, cleanGiving } from "../src/staff/churchEdits.ts";
+test("giving is optional: none, or a good link / bank details, passes", () => {
+  assert.deepEqual(checkInput(good()), []);
+  assert.deepEqual(checkInput({ ...good(), giving: { link: "https://give.example.org", bank: { bankName: "Sample Bank" }, note: "Thank you" } }), []);
+});
+test("giving: ticked but empty, a non-https link and over-long text are named by field", () => {
+  assert.deepEqual(checkGiving({ bank: {} }), [{ field: "giving", problem: "empty" }]);
+  assert.deepEqual(checkGiving({ link: "http://give.example.org" }), [{ field: "giving.link", problem: "invalidLink" }]);
+  assert.deepEqual(checkGiving({ link: "javascript:alert(1)" }), [{ field: "giving.link", problem: "invalidLink" }]);
+  assert.deepEqual(checkGiving({ bank: { upi: "x".repeat(121) } }), [{ field: "giving.bank.upi", problem: "tooLongShort" }]);
+  assert.deepEqual(checkGiving({ link: "https://a.example.org", note: "x".repeat(301) }), [{ field: "giving.note", problem: "lineTooLong" }]);
+});
+test("giving is trimmed, empty fields dropped, and left out of a clean edit when empty", () => {
+  assert.deepEqual(cleanGiving({ link: " https://g.example.org ", bank: { bankName: " B ", branch: " " } }), { link: "https://g.example.org", bank: { bankName: "B" } });
+  assert.equal(cleanGiving({ bank: {} }), undefined);
+  assert.equal("giving" in cleanInput(good()), false);
+});
+test("the browser store saves giving, and unticking it removes it", async () => {
+  const s = store();
+  const made = await s.create({ ...good(), giving: { link: "https://g.example.org" } });
+  assert.equal(made.giving.link, "https://g.example.org");
+  const off = await s.update(made.id, good(), made.version);
+  assert.equal(off.giving, undefined);
+});
+
+test("the test site passes a saved church's giving details on to its page", async () => {
+  const { savedChurchAnswer } = await import("../src/church/stubChurches.ts");
+  const rows = [{ id: "c1", name: { en: "G" }, colors: {}, defaultLanguage: "en", addresses: ["g.church.test"], status: "active", texts: {}, activePlanId: "p1", giving: { link: "https://g.example.org" } }];
+  const plans = [{ id: "p1", version: 1, title: { en: "P" }, days: [[{ book: "psalms", chapter: 1 }]] }];
+  const read = (k) => JSON.stringify(k.includes("plans") ? plans : rows);
+  const a = savedChurchAnswer("g.church.test", read);
+  assert.equal(a.body.church.giving.link, "https://g.example.org");
+});

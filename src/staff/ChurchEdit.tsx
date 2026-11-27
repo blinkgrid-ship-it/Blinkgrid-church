@@ -39,7 +39,19 @@ const toInput = (c: ChurchRecord): ChurchInput => ({
   defaultLanguage: c.defaultLanguage,
   addresses: c.addresses.length ? [...c.addresses] : [""],
   timeZone: c.timeZone || "UTC",
+  ...(c.giving ? { giving: { ...c.giving, bank: { ...c.giving.bank } } } : {}),
 });
+
+/** The bank fields of the optional Giving section, in the order the Giving page shows them, with their label keys. */
+const BANK_LABELS = [
+  ["accountName", "admin:churchGivingAccountName"],
+  ["bankName", "admin:churchGivingBankName"],
+  ["branch", "admin:churchGivingBranch"],
+  ["accountNumber", "admin:churchGivingAccountNumber"],
+  ["ifsc", "admin:churchGivingIfsc"],
+  ["swift", "admin:churchGivingSwift"],
+  ["upi", "admin:churchGivingUpi"],
+] as const;
 
 /** The form for one church: name per language, colours, default language, web addresses, and its status. New (`/staff/new`) or edit (`/staff/:id`). */
 export function ChurchEdit({ isNew = false }: { isNew?: boolean }) {
@@ -255,6 +267,54 @@ export function ChurchEdit({ isNew = false }: { isNew?: boolean }) {
           <button type="button" onClick={() => set({ addresses: [...form.addresses, ""] })}>
             {t("admin:churchAddressAdd")}
           </button>
+        </fieldset>
+
+        <fieldset disabled={!canSave || busy}>
+          <legend>{t("admin:churchGiving")}</legend>
+          <label className="os-check">
+            <input type="checkbox" checked={!!form.giving} onChange={(e) => set({ giving: e.target.checked ? { bank: {} } : undefined })} />
+            {t("admin:churchGivingOn")}
+          </label>
+          {form.giving && (
+            <>
+              <p className="os-field-hint">{t("admin:churchGivingHint")}</p>
+              {store.kind === "server" && <p className="os-field-hint">{t("admin:churchGivingServerNote")}</p>}
+              {fieldError("giving")}
+              <label className="os-field">
+                {t("admin:churchGivingLink")}
+                <input
+                  value={form.giving.link ?? ""}
+                  inputMode="url"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  maxLength={500}
+                  placeholder="https://give.example.org"
+                  aria-invalid={!!problemFor("giving.link")}
+                  onChange={(e) => set({ giving: { ...form.giving, link: e.target.value } })}
+                />
+                {fieldError("giving.link")}
+              </label>
+              {BANK_LABELS.map(([key, label]) => (
+                <label className="os-field" key={key}>
+                  {t(label)}
+                  <input
+                    value={form.giving?.bank?.[key] ?? ""}
+                    maxLength={120}
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    aria-invalid={!!problemFor(`giving.bank.${key}`)}
+                    onChange={(e) => set({ giving: { ...form.giving, bank: { ...form.giving?.bank, [key]: e.target.value } } })}
+                  />
+                  {fieldError(`giving.bank.${key}`)}
+                </label>
+              ))}
+              <label className="os-field">
+                {t("admin:churchGivingNote")}
+                <input value={form.giving.note ?? ""} maxLength={300} aria-invalid={!!problemFor("giving.note")} onChange={(e) => set({ giving: { ...form.giving, note: e.target.value } })} />
+                {fieldError("giving.note")}
+              </label>
+            </>
+          )}
         </fieldset>
 
         {canSave && (

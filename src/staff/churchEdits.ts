@@ -1,6 +1,6 @@
 // The rules of the church screens, written to docs/contracts/CHURCH-SETUP-contract.md (Parts 1, 2 and 6). No browser code here, so they are
 // tested alone (tests/admin-churches.test.mjs). The server repeats every rule: only the server is trusted; these only save a trip and name the field.
-import { contrast } from "../church/parse.ts";
+import { contrast, BANK_FIELDS, type ChurchGiving } from "../church/parse.ts";
 
 export const LANGUAGES = ["en", "ml", "hi"] as const;
 export type Language = (typeof LANGUAGES)[number];
@@ -29,6 +29,8 @@ export type ChurchRecord = {
   /** The church's time zone; a church saved before this existed has none (the server treats that as UTC). */
   timeZone?: string;
   addresses: string[];
+  /** Optional: where the church takes gifts (its own link and/or bank details). No Giving page when absent. */
+  giving?: ChurchGiving;
   status: ChurchStatus;
   /** Set on the Bible text screen (T-148); empty until then. */
   texts: Partial<Record<Language, ChurchText>>;
@@ -47,6 +49,8 @@ export type ChurchInput = {
   addresses: string[];
   /** The church's time zone (an IANA name such as Asia/Kolkata). The day of a dated plan changes at midnight there. The server uses UTC when none is sent. */
   timeZone?: string;
+  /** Optional. Left out (or empty) means the church has no Giving page. */
+  giving?: ChurchGiving;
 };
 
 /** The zones the screen offers first; any other zone a church already has is kept and shown. */
@@ -125,7 +129,51 @@ export function checkInput(input: ChurchInput): Detail[] {
   const { accent, accentDark } = input.colors;
   if (accent && !HEX.test(accent)) problems.push({ field: "colors.accent", problem: "contrast" });
   if (accentDark && !HEX.test(accentDark)) problems.push({ field: "colors.accentDark", problem: "contrast" });
+  problems.push(...checkGiving(input.giving));
   return problems;
+}
+
+export const GIVING_LINK_MAX = 500;
+export const GIVING_BANK_MAX = 120;
+export const GIVING_NOTE_MAX = 300;
+
+/** The problems with the optional giving details, by field: `giving.link`, `giving.bank.<field>`, `giving.note`, and `giving` when nothing is filled in. */
+export function checkGiving(giving: ChurchGiving | undefined): Detail[] {
+  if (!giving) return [];
+  const problems: Detail[] = [];
+  const link = (giving.link ?? "").trim();
+  if (link) {
+    let ok = false;
+    try {
+      const u = new URL(link);
+      ok = u.protocol === "https:" && !u.username && !u.password && link.length <= GIVING_LINK_MAX;
+    } catch {
+      ok = false;
+    }
+    if (!ok) problems.push({ field: "giving.link", problem: "invalidLink" });
+  }
+  for (const key of BANK_FIELDS) if ((giving.bank?.[key] ?? "").trim().length > GIVING_BANK_MAX) problems.push({ field: `giving.bank.${key}`, problem: "tooLongShort" });
+  if ((giving.note ?? "").trim().length > GIVING_NOTE_MAX) problems.push({ field: "giving.note", problem: "lineTooLong" });
+  if (!problems.length && !cleanGiving(giving)) problems.push({ field: "giving", problem: "empty" });
+  return problems;
+}
+
+/** The giving details trimmed, empty fields removed; undefined when there is nothing to show. */
+export function cleanGiving(giving: ChurchGiving | undefined): ChurchGiving | undefined {
+  if (!giving) return undefined;
+  const out: ChurchGiving = {};
+  const link = (giving.link ?? "").trim();
+  if (link) out.link = link;
+  const bank: NonNullable<ChurchGiving["bank"]> = {};
+  for (const key of BANK_FIELDS) {
+    const v = (giving.bank?.[key] ?? "").trim();
+    if (v) bank[key] = v;
+  }
+  if (Object.keys(bank).length) out.bank = bank;
+  if (!out.link && !out.bank) return undefined;
+  const note = (giving.note ?? "").trim();
+  if (note) out.note = note;
+  return out;
 }
 
 /** Cleans an edit the way the server will: trimmed names, lower-case host names, empty colours removed. */
@@ -139,7 +187,8 @@ export function cleanInput(input: ChurchInput): ChurchInput {
   if (input.colors.accent?.trim()) colors.accent = input.colors.accent.trim().toLowerCase();
   if (input.colors.accentDark?.trim()) colors.accentDark = input.colors.accentDark.trim().toLowerCase();
   const timeZone = input.timeZone?.trim();
-  return { name, colors, defaultLanguage: input.defaultLanguage, addresses: input.addresses.map(normalizeAddress).filter(Boolean), ...(timeZone ? { timeZone } : {}) };
+  const giving = cleanGiving(input.giving);
+  return { name, colors, defaultLanguage: input.defaultLanguage, addresses: input.addresses.map(normalizeAddress).filter(Boolean), ...(timeZone ? { timeZone } : {}), ...(giving ? { giving } : {}) };
 }
 
 export const statusAllows = (status: PermissionStatus) => status === "public-domain" || status === "permission-granted";

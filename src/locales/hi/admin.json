@@ -133,5 +133,21 @@
   "churchPlanStart": "योजना का पहला दिन",
   "churchPlanStartHintSet": "सब एक ही दिन का पाठ पढ़ेंगे। यही तारीख पहला दिन है।",
   "churchPlanStartHintEmpty": "कोई तारीख नहीं: हर पाठक उस दिन से शुरू करता है जब वह योजना चुनता है। सब एक ही दिन पढ़ें, इसके लिए तारीख चुनें।",
-  "churchPlanRepeats": "आख़िरी दिन के बाद फिर से शुरू करें"
+  "churchPlanRepeats": "आख़िरी दिन के बाद फिर से शुरू करें",
+  "churchGiving": "दान (वैकल्पिक)",
+  "churchGivingOn": "इस चर्च के लिए दान पृष्ठ दिखाएँ",
+  "churchGivingHint": "यह साइट केवल ये जानकारी दिखाती है। इससे कोई भुगतान नहीं होता और कुछ सहेजा नहीं जाता। दान का लिंक, बैंक विवरण, या दोनों भरें।",
+  "churchGivingLink": "चर्च का अपना दान पृष्ठ (https पता)",
+  "churchGivingNote": "दान देने वालों के लिए एक छोटी पंक्ति (वैकल्पिक)",
+  "churchGivingAccountName": "खाते का नाम",
+  "churchGivingBankName": "बैंक",
+  "churchGivingBranch": "शाखा",
+  "churchGivingAccountNumber": "खाता संख्या",
+  "churchGivingIfsc": "IFSC कोड",
+  "churchGivingSwift": "SWIFT कोड",
+  "churchGivingUpi": "UPI आईडी",
+  "churchProblemInvalidLink": "पूरा https पता लिखें, जैसे https://give.example.org।",
+  "churchProblemTooLongShort": "बहुत लंबा (अधिकतम 120 अक्षर)।",
+  "churchProblemEmpty": "दान का लिंक या कम से कम एक बैंक विवरण जोड़ें, या बॉक्स का निशान हटाएँ।",
+  "churchGivingServerNote": "जब तक सर्वर इसे समर्थन नहीं देता, दान विवरण केवल इस स्क्रीन के टेस्ट संस्करण में रखे जाते हैं।"
 }

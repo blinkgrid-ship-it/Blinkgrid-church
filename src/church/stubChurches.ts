@@ -48,7 +48,7 @@ const STUBS: Record<string, StubAnswer> = {
 
 const NOT_FOUND: StubAnswer = { status: 404, body: { error: { code: "CHURCH_NOT_FOUND", message: "No church for this address" } } };
 
-type SavedChurch = { id: string; timeZone?: string; name: Record<string, string>; colors: Record<string, string>; defaultLanguage: string; addresses: string[]; status: string; texts: Record<string, { editionCode: string }>; activePlanId: string | null };
+type SavedChurch = { id: string; timeZone?: string; name: Record<string, string>; colors: Record<string, string>; defaultLanguage: string; addresses: string[]; status: string; giving?: unknown; texts: Record<string, { editionCode: string }>; activePlanId: string | null };
 type SavedPlan = { id: string; version: number; title: Record<string, string>; days: unknown[]; startDate?: string | null; repeats?: boolean };
 
 /** A church made on the test staff screen (kept in this browser), answered the way the server would: only when it is active and has a plan. */
@@ -73,6 +73,7 @@ export function savedChurchAnswer(host: string, read: (key: string) => string | 
           addresses: c.addresses,
           dailyText: Object.fromEntries(Object.entries(c.texts).map(([lang, t]) => [lang, t.editionCode])),
           timeZone: c.timeZone || "UTC",
+          ...(c.giving ? { giving: c.giving } : {}),
           // As the server does: a plan with a start date also says which day it is today in the church's time zone.
           plan: {
             id: plan.id,

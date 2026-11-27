@@ -133,5 +133,21 @@
   "churchPlanStart": "പദ്ധതിയുടെ ആദ്യ ദിവസം",
   "churchPlanStartHintSet": "എല്ലാവരും ഒരേ ദിവസത്തെ വായന വായിക്കും. ഈ തീയതിയാണ് ഒന്നാം ദിവസം.",
   "churchPlanStartHintEmpty": "തീയതി ഇല്ല: ഓരോ വായനക്കാരനും പദ്ധതി തിരഞ്ഞെടുക്കുന്ന ദിവസം തുടങ്ങും. എല്ലാവരും ഒരേ ദിവസം വായിക്കാൻ ഒരു തീയതി തിരഞ്ഞെടുക്കുക.",
-  "churchPlanRepeats": "അവസാന ദിവസത്തിനു ശേഷം വീണ്ടും തുടങ്ങുക"
+  "churchPlanRepeats": "അവസാന ദിവസത്തിനു ശേഷം വീണ്ടും തുടങ്ങുക",
+  "churchGiving": "സംഭാവന (ഓപ്ഷണൽ)",
+  "churchGivingOn": "ഈ ചർച്ചിന് സംഭാവന പേജ് കാണിക്കുക",
+  "churchGivingHint": "ഈ സൈറ്റ് ഈ വിവരങ്ങൾ കാണിക്കുക മാത്രമേ ചെയ്യൂ. ഇതിലൂടെ പണം പോകുന്നില്ല, ഒന്നും സൂക്ഷിക്കുന്നുമില്ല. സംഭാവന ലിങ്ക്, ബാങ്ക് വിവരങ്ങൾ, അല്ലെങ്കിൽ രണ്ടും നൽകുക.",
+  "churchGivingLink": "ചർച്ചിന്റെ സ്വന്തം സംഭാവന പേജ് (https വിലാസം)",
+  "churchGivingNote": "സംഭാവന ചെയ്യുന്നവർക്കുള്ള ഒരു ചെറിയ വരി (ഓപ്ഷണൽ)",
+  "churchGivingAccountName": "അക്കൗണ്ട് പേര്",
+  "churchGivingBankName": "ബാങ്ക്",
+  "churchGivingBranch": "ശാഖ",
+  "churchGivingAccountNumber": "അക്കൗണ്ട് നമ്പർ",
+  "churchGivingIfsc": "IFSC കോഡ്",
+  "churchGivingSwift": "SWIFT കോഡ്",
+  "churchGivingUpi": "UPI ഐഡി",
+  "churchProblemInvalidLink": "പൂർണ്ണ https വിലാസം നൽകുക, ഉദാഹരണം https://give.example.org.",
+  "churchProblemTooLongShort": "വളരെ നീണ്ടത് (പരമാവധി 120 അക്ഷരം).",
+  "churchProblemEmpty": "ഒരു സംഭാവന ലിങ്കോ ഒരു ബാങ്ക് വിവരമെങ്കിലുമോ ചേർക്കുക, അല്ലെങ്കിൽ ബോക്സിലെ ടിക്ക് മാറ്റുക.",
+  "churchGivingServerNote": "സെർവർ ഇത് പിന്തുണയ്ക്കുന്നതുവരെ, സംഭാവന വിവരങ്ങൾ ഈ സ്ക്രീനിന്റെ ടെസ്റ്റ് പതിപ്പിൽ മാത്രമേ സൂക്ഷിക്കൂ."
 }
