@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BookOpen } from "lucide-react";
 import { Page, Row, useUI } from "../Platform";
 import { Notice } from "../ui/Notice";
+import { Skeleton } from "../ui/Skeleton";
 import { dailyBooks, type DailyBook } from "./source";
 import { TodayPlan } from "./TodayPlan";
 import { dailyEdition, dailyTextIsStandIn } from "./config";
@@ -16,9 +17,11 @@ import "./daily.css";
  */
 export function DailyBiblePage() {
   const { t, prefs } = useUI();
-  const [books, setBooks] = useState<DailyBook[]>([]);
-  const first = books[0]?.chapters.length ? { book: books[0].slug, chapter: books[0].chapters[0] } : null;
+  const [loaded, setLoaded] = useState<{ edition: string; books: DailyBook[] } | null>(null);
   const edition = dailyEdition(prefs.language);
+  const books = loaded && loaded.edition === edition ? loaded.books : [];
+  const loadingBooks = !!edition && loaded?.edition !== edition;
+  const first = books[0]?.chapters.length ? { book: books[0].slug, chapter: books[0].chapters[0] } : null;
   // Where the reader stopped, if it was in this language's text.
   const saved = readPlace();
   const place = saved && saved.language === prefs.language ? saved : null;
@@ -26,8 +29,12 @@ export function DailyBiblePage() {
     if (!edition) return;
     const c = new AbortController();
     dailyBooks(edition, c.signal)
-      .then(setBooks)
-      .catch(() => {});
+      .then((books) => {
+        if (!c.signal.aborted) setLoaded({ edition, books });
+      })
+      .catch(() => {
+        if (!c.signal.aborted) setLoaded({ edition, books: [] });
+      });
     return () => c.abort();
   }, [edition]);
   return (
@@ -43,6 +50,7 @@ export function DailyBiblePage() {
           <Row to={placePath(place)} title={t("daily:continue")} icon={<BookOpen size={22} />} />
         )}
         {first && <Row to={`/daily/read/${first.book}/${first.chapter}`} title={t("daily:start")} icon={<BookOpen size={22} />} />}
+        {loadingBooks && <Skeleton kind="row" />}
       </section>
       <SavedVerses key={prefs.language} language={prefs.language} />
     </Page>

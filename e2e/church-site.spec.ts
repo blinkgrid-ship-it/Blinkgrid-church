@@ -59,6 +59,43 @@ test("the site's own address (no church named) shows the normal Daily Bible, not
   expect(await noOverflow(page)).toBe(true);
 });
 
+test("the Daily Bible shows a row skeleton while the book catalog loads", async ({ page }) => {
+  let release!: () => void;
+  const pending = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("https://bolls.life/get-books/**", async (route) => {
+    await pending;
+    await route.fulfill({ json: BOOKS });
+  });
+  try {
+    await page.goto("/en/daily");
+    await expect(page.locator(".os-skel-inline[role=status]")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Start reading" })).toHaveCount(0);
+    expect(await noOverflow(page)).toBe(true);
+  } finally {
+    release();
+  }
+  await expect(page.getByRole("link", { name: "Start reading" })).toBeVisible();
+  await expect(page.locator(".os-skel-inline")).toHaveCount(0);
+});
+
+test("opening a lazy reader route shows a reader skeleton", async ({ page }) => {
+  let release!: () => void;
+  const pending = new Promise<void>((resolve) => { release = resolve; });
+  await page.route(/\/assets\/DailyReader-[^/]+\.js$/, async (route) => {
+    await pending;
+    await route.continue();
+  });
+  try {
+    await page.goto("/en/daily");
+    await page.getByRole("link", { name: "Start reading" }).click();
+    await expect(page.locator(".os-skel-reader.os-route-loading")).toBeVisible();
+  } finally {
+    release();
+  }
+  await expect(page.locator("[data-verse]")).toHaveCount(6);
+  await expect(page.locator(".os-skel-reader")).toHaveCount(0);
+});
+
 test("the home address opens the Daily Bible, in the church's name", async ({ page }) => {
   await page.goto(`/en/${CHURCH}`);
   await expect(page).toHaveURL(/\/en\/daily$/);

@@ -9,6 +9,17 @@
   display: grid;
   gap: 14px;
 }
+.os-skel-inline {
+  min-height: 0;
+  margin-block-end: 10px;
+  padding: 0;
+}
+.os-skel-inline .os-skel-row {
+  min-height: 68px;
+  padding: 18px 20px;
+  border-radius: 9px;
+  background: var(--core-surface);
+}
 .os-skel-bar,
 .os-skel-heading,
 .os-skel-box,

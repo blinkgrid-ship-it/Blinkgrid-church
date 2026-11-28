@@ -26,6 +26,7 @@ import { churchUnavailable } from "./church/churchStore";
 import { BackLink } from "./nav/BackLink";
 import { ErrorBoundary } from "./ui/ErrorBoundary";
 import { Notice, type Tone } from "./ui/Notice";
+import { Skeleton } from "./ui/Skeleton";
 import { isFullLanguage, languageTag } from "./lang/languages";
 import { LANGUAGE_NAMES, PREFERENCES_KEY, currentUrlLanguage, openInLanguage, type LanguageChange, type LanguageDestination } from "./lang/urlLanguage";
 
@@ -359,6 +360,8 @@ export default function Platform() {
   // An address that is not the church's own shows "Not available here"; the home address opens the Daily Bible.
   // The staff area (/staff) is not a church page: it is shown on any address, and the server decides who may use it.
   const staffArea = location.pathname === "/staff" || location.pathname.startsWith("/staff/");
+  const readerRoute = location.pathname.startsWith("/daily/read/");
+  const loadingBoundary = staffArea ? "staff" : readerRoute ? "reader" : location.pathname;
   const rule = churchPathRule(location.pathname);
   return (
     <UI.Provider value={{ prefs, setPrefs, changeLanguage, t, notice: (text, tone = "info") => setToast({ text, tone }) }}>
@@ -386,13 +389,7 @@ export default function Platform() {
         </header>
         <main id="main" tabIndex={-1}>
           <ErrorBoundary resetKey={location.pathname} canReport={false}>
-            <Suspense
-              fallback={
-                <div className="os-route-loading" role="status">
-                  <p>{t("common:loading")}</p>
-                </div>
-              }
-            >
+            <Suspense key={loadingBoundary} fallback={<Skeleton kind={readerRoute ? "reader" : "page"} />}>
               {staffArea ? (
                 <Routes>
                   <Route path="/staff" element={<StaffLayout />}>
