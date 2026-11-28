@@ -48,6 +48,11 @@ function pickHost() {
 /** The address of the active church this visit belongs to. Null for OriginalScript itself, an unknown or inactive church, or the safe state: those are never counted. */
 let countedHost: string | null = null;
 
+/** The simulated church to preserve in links opened in a fresh tab on a test site. */
+export function testChurchHost(): string | null {
+  return ALLOW_TEST_HOST && countedHost !== window.location.hostname ? countedHost : null;
+}
+
 /**
  * Counts this reader once today for the church (contract Part 8, T-167): one call, with the address only, per browser per day.
  * Nothing about the reader is sent or kept. Does nothing for OriginalScript itself or a church that did not load, and never throws or waits:

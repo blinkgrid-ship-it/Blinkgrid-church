@@ -95,6 +95,72 @@ test("More has only the church's own rows", async ({ page }) => {
   await expect(page.locator("main .os-row strong")).toHaveText(["Daily Bible", "Language & reading settings"]);
 });
 
+test("saved verses persist and reopen the exact verse", async ({ page }) => {
+  await page.goto(`/en/daily/read/john/1${CHURCH}&part=2of2`);
+  const verse = page.getByRole("button", { name: "Verse actions for John 1:5" });
+  await verse.focus();
+  await verse.press("Enter");
+  const actions = page.getByRole("dialog", { name: "John 1:5" });
+  await actions.getByRole("button", { name: "Save verse" }).click();
+  await expect(actions.getByRole("status")).toHaveText("Verse saved on this device.");
+  await page.keyboard.press("Escape");
+  await expect(actions).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Verse actions for John 1:5 (saved)" })).toBeFocused();
+  await page.goto(`/en/daily${CHURCH}`);
+  await page.reload();
+  const saved = page.getByRole("region", { name: "Saved verses" });
+  await saved.getByRole("link", { name: "John 1:5" }).click();
+  await expect(page.locator(".dl-verse-target")).toHaveAttribute("data-verse", "5");
+  await expect(page.locator(".dl-verse-target")).toBeInViewport();
+  await page.goto(`/en/daily${CHURCH}`);
+  await saved.getByRole("button", { name: "Remove John 1:5" }).click();
+  await expect(saved.getByRole("status")).toHaveText("Verse removed.");
+  await page.reload();
+  await expect(saved).toHaveCount(0);
+});
+
+test("a verse link can be shared or copied and opens in a fresh tab", async ({ page, context }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "share", { value: async (data: ShareData) => {
+      sessionStorage.setItem("test-share-url", data.url ?? "");
+    } });
+    Object.defineProperty(navigator, "clipboard", { value: { writeText: async (url: string) => {
+      sessionStorage.setItem("test-copy-url", url);
+    } } });
+  });
+  await page.goto(`/en/daily/read/john/1${CHURCH}`);
+  await page.getByRole("button", { name: "Verse actions for John 1:4" }).click();
+  const actions = page.getByRole("dialog");
+  await actions.getByRole("button", { name: "Share verse link" }).click();
+  await actions.getByRole("button", { name: "Copy verse link" }).click();
+  await expect(actions.getByRole("status")).toHaveText("Verse link copied.");
+  const copied = await page.evaluate(() => sessionStorage.getItem("test-copy-url"));
+  expect(copied).toBe(await page.evaluate(() => sessionStorage.getItem("test-share-url")));
+  expect(copied).toContain("/en/daily/read/john/1?verse=4&churchHost=active.church.test");
+  const recipient = await context.newPage();
+  await recipient.goto(copied!);
+  await expect(recipient.locator(".os-header .os-brand")).toContainText("Sample Church");
+  await expect(recipient.locator(".dl-verse-target")).toHaveAttribute("data-verse", "4");
+  await expect(recipient.locator(".dl-verse-target")).toBeInViewport();
+});
+
+test("a desktop reader can copy a verse link by hand when clipboard access fails", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "share", { value: undefined });
+    Object.defineProperty(navigator, "clipboard", { value: { writeText: async () => {
+      throw new DOMException("Clipboard unavailable", "NotAllowedError");
+    } } });
+  });
+  await page.goto("/en/daily/read/john/1");
+  await page.getByRole("button", { name: "Verse actions for John 1:4" }).click();
+  const actions = page.getByRole("dialog");
+  await expect(actions.getByRole("button", { name: "Share verse link" })).toHaveCount(0);
+  await actions.getByRole("button", { name: "Copy verse link" }).click();
+  await expect(actions.getByRole("textbox", { name: "Verse link" })).toHaveValue(/\/en\/daily\/read\/john\/1\?verse=4$/);
+  expect(await noOverflow(page)).toBe(true);
+});
+
 test("Settings opens, and the language menu lists the church's languages", async ({ page }) => {
   await page.goto(`/en/settings${CHURCH}`);
   await expect(page.getByRole("heading", { level: 1 })).not.toHaveText("Not available here");

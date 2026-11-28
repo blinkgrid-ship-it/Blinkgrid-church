@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { Bookmark, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { Page, useUI } from "../Platform";
 import { countReaderToday } from "../church/churchStore";
 import { Dropdown } from "../ui/Dropdown";
@@ -14,6 +14,8 @@ import { DEFAULT_SIZE, SIZES, readSize, savePlace, saveSize } from "./resume";
 import { finishPause, shouldPause, skipPause } from "./pause";
 import { PauseScreen } from "./PauseScreen";
 import { AutoScrollSwitch } from "./AutoScrollSwitch";
+import { VerseActions } from "./VerseActions";
+import { readSavedVerses, type SavedVerse } from "./verseBookmarks";
 import "./daily.css";
 
 /**
@@ -32,6 +34,8 @@ export function DailyReader() {
   const [error, setError] = useState("");
   const [size, setSize] = useState(readSize);
   const [pausing, setPausing] = useState(shouldPause);
+  const [selectedVerse, setSelectedVerse] = useState<SavedVerse | null>(null);
+  const [savedVerses, setSavedVerses] = useState(() => readSavedVerses(language));
   const article = useRef<HTMLElement>(null);
   // A reader who opens a reading is counted once a day for the church (contract Part 8). Only the church's address is sent.
   useEffect(() => {
@@ -72,15 +76,15 @@ export function DailyReader() {
   // Land on the verse where the reader stopped, once the chapter is on the page.
   const wanted = params.get("verse");
   useEffect(() => {
-    if (!data || data === "missing") return;
+    if (pausing || !article.current || !data || data === "missing") return;
     const target = wanted ? article.current?.querySelector<HTMLElement>(`[data-verse="${CSS.escape(wanted)}"]`) : null;
     if (target) target.scrollIntoView({ block: "start" });
     else window.scrollTo(0, 0);
-  }, [data, wanted]);
+  }, [data, wanted, pausing]);
 
   // Remember the first verse on screen, a moment after the reader stops scrolling.
   useEffect(() => {
-    if (!data || data === "missing") return;
+    if (pausing || !article.current || !data || data === "missing") return;
     let timer = 0;
     const remember = () => {
       const verses = [...(article.current?.querySelectorAll<HTMLElement>("[data-verse]") ?? [])];
@@ -97,7 +101,7 @@ export function DailyReader() {
       window.removeEventListener("scroll", onScroll);
       window.clearTimeout(timer);
     };
-  }, [data, language, book, number]);
+  }, [data, language, book, number, pausing]);
 
   // The chapter keeps loading under the pause, so reading starts at once when it ends.
   if (pausing)
@@ -195,21 +199,33 @@ export function DailyReader() {
                       Math.floor((data.verses.length * part.index) / part.count),
                     )
                   : data.verses
-                ).map((v) => (
-                  <p key={v.verseId} data-verse={v.verseLabel} className="dl-verse">
-                    <span className="dl-num">
-                      {v.verseLabel}
-                    </span>
-                    <span className="dl-words">
-                      {v.text}
-                      {"notes" in v && v.notes?.map((n, i) => (
-                        <span key={i} className="dl-note">
-                          {n}
-                        </span>
-                      ))}
-                    </span>
-                  </p>
-                ))}
+                ).map((v) => {
+                  const reference = `${bookName} ${number}:${v.verseLabel}`;
+                  const saved = savedVerses.some((entry) =>
+                    entry.language === language && entry.book === book && entry.chapter === number && entry.verse === v.verseLabel);
+                  return (
+                    <p key={v.verseId} data-verse={v.verseLabel} className={`dl-verse${wanted === v.verseLabel ? " dl-verse-target" : ""}`}>
+                      <button
+                        type="button"
+                        className="dl-num"
+                        aria-haspopup="dialog"
+                        aria-label={t(saved ? "daily:savedVerseActions" : "daily:verseActions", { reference })}
+                        onClick={() => setSelectedVerse({ language, book, chapter: number, verse: v.verseLabel, reference })}
+                      >
+                        <span>{v.verseLabel}</span>
+                        {saved && <Bookmark size={12} fill="currentColor" aria-hidden="true" />}
+                      </button>
+                      <span className="dl-words">
+                        {v.text}
+                        {"notes" in v && v.notes?.map((n, i) => (
+                          <span key={i} className="dl-note">
+                            {n}
+                          </span>
+                        ))}
+                      </span>
+                    </p>
+                  );
+                })}
               </div>
               <p className="dl-attribution">{pick(data.attribution, language)}</p>
               <nav className="dl-steps" aria-label={t("daily:chapter")}>
@@ -236,6 +252,9 @@ export function DailyReader() {
           )}
           {data && data !== "missing" && <AutoScrollSwitch size={size || DEFAULT_SIZE} resetKey={`${book}/${number}/${params.get("part") ?? ""}`} />}
         </>
+      )}
+      {selectedVerse && selectedVerse.book === book && selectedVerse.chapter === number && selectedVerse.language === language && (
+        <VerseActions verse={selectedVerse} onClose={() => setSelectedVerse(null)} onSaved={setSavedVerses} />
       )}
     </Page>
   );

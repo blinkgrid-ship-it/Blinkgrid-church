@@ -87,15 +87,119 @@
 .dl-text p.dl-verse:last-child {
   border-bottom: 0;
 }
+.dl-text p.dl-verse-target {
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--core-accent) 10%, transparent);
+}
 .dl-num {
-  justify-self: end;
-  padding-inline-end: 0.45em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
   color: var(--os-accent, #895031);
   font-family: Inter, system-ui, sans-serif;
   font-size: max(13px, 0.62em);
   font-weight: 700;
   line-height: 2.3;
   font-variant-numeric: tabular-nums;
+}
+.dl-num:hover,
+.dl-icon-action:hover {
+  background: color-mix(in srgb, var(--core-accent) 12%, transparent);
+}
+.dl-num:focus-visible,
+.dl-icon-action:focus-visible {
+  outline: 2px solid var(--core-accent);
+  outline-offset: 2px;
+}
+.dl-icon-action {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.dl-verse-dialog {
+  width: min(calc(100% - 32px), 24rem);
+  max-height: calc(100% - 32px);
+  padding: 0;
+  border: 1px solid var(--core-line);
+  border-radius: 16px;
+  background: var(--core-surface);
+  color: inherit;
+}
+.dl-verse-dialog::backdrop {
+  background: rgb(0 0 0 / 48%);
+}
+.dl-verse-panel {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+.dl-verse-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.os-app .dl-verse-panel h2 {
+  margin: 0;
+  font-size: 22px;
+}
+.dl-verse-panel > button {
+  justify-content: flex-start;
+  text-align: start;
+}
+.dl-verse-panel input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--core-line);
+  border-radius: 8px;
+  background: var(--core-surface);
+  color: inherit;
+  font: inherit;
+}
+.dl-verse-status {
+  margin: 0;
+  color: var(--core-muted);
+}
+.dl-verse-status:empty {
+  margin-block-start: -8px;
+}
+.dl-saved {
+  margin-block-start: 24px;
+}
+.dl-saved ul {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.dl-saved li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dl-saved .os-row {
+  flex: 1;
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .dl-verse-dialog {
+    margin-block: auto 12px;
+  }
 }
 .dl-words {
   min-width: 0;

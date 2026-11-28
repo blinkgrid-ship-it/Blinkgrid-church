@@ -6,6 +6,7 @@ import { dailyBooks, type DailyBook } from "./source";
 import { TodayPlan } from "./TodayPlan";
 import { dailyEdition, dailyTextIsStandIn } from "./config";
 import { placePath, readPlace } from "./resume";
+import { SavedVerses } from "./SavedVerses";
 import "./daily.css";
 
 /**
@@ -43,6 +44,7 @@ export function DailyBiblePage() {
         )}
         {first && <Row to={`/daily/read/${first.book}/${first.chapter}`} title={t("daily:start")} icon={<BookOpen size={22} />} />}
       </section>
+      <SavedVerses key={prefs.language} language={prefs.language} />
     </Page>
   );
 }
