@@ -1,4 +1,5 @@
 {
+  "verseTip": "Tap a verse number to save the verse, share it, or copy its link.",
   "verseActions": "Verse actions for {{reference}}",
   "savedVerseActions": "Verse actions for {{reference}} (saved)",
   "verseActionsClose": "Close verse actions",

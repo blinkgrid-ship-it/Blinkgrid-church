@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Bookmark, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { ArrowDown, Bookmark, ChevronLeft, ChevronRight, Minus, Plus, X } from "lucide-react";
 import { Page, useUI } from "../Platform";
 import { countReaderToday } from "../church/churchStore";
 import { Dropdown } from "../ui/Dropdown";
@@ -17,6 +17,8 @@ import { AutoScrollSwitch } from "./AutoScrollSwitch";
 import { VerseActions } from "./VerseActions";
 import { readSavedVerses, type SavedVerse } from "./verseBookmarks";
 import "./daily.css";
+
+const VERSE_TIP_KEY = "blinkgrid-church.daily.verse-tip.v1";
 
 /**
  * One whole chapter in large, calm text with verse numbers (item 3 of the brief). The text size and the place where the reader
@@ -36,6 +38,13 @@ export function DailyReader() {
   const [pausing, setPausing] = useState(shouldPause);
   const [selectedVerse, setSelectedVerse] = useState<SavedVerse | null>(null);
   const [savedVerses, setSavedVerses] = useState(() => readSavedVerses(language));
+  const [verseTipDismissed, setVerseTipDismissed] = useState(() => {
+    try {
+      return localStorage.getItem(VERSE_TIP_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
   const article = useRef<HTMLElement>(null);
   // A reader who opens a reading is counted once a day for the church (contract Part 8). Only the church's address is sent.
   useEffect(() => {
@@ -75,6 +84,20 @@ export function DailyReader() {
 
   // Land on the verse where the reader stopped, once the chapter is on the page.
   const wanted = params.get("verse");
+  const chapterVerses = data && data !== "missing" ? data.verses : [];
+  const visibleVerses = part ? chapterVerses.slice(
+    Math.floor((chapterVerses.length * (part.index - 1)) / part.count),
+    Math.floor((chapterVerses.length * part.index) / part.count),
+  ) : chapterVerses;
+  const showVerseTip = !verseTipDismissed && !wanted && visibleVerses.length > 0;
+  function dismissVerseTip() {
+    setVerseTipDismissed(true);
+    try {
+      localStorage.setItem(VERSE_TIP_KEY, "1");
+    } catch {
+      // The tip stays dismissed in this reader when storage is unavailable.
+    }
+  }
   useEffect(() => {
     if (pausing || !article.current || !data || data === "missing") return;
     const target = wanted ? article.current?.querySelector<HTMLElement>(`[data-verse="${CSS.escape(wanted)}"]`) : null;
@@ -192,14 +215,25 @@ export function DailyReader() {
               dir={data.direction}
               style={{ ["--dl-size" as string]: `${size || DEFAULT_SIZE}px` }}
             >
+              {showVerseTip && (
+                <div className="dl-verse-tip" lang={language} dir="ltr">
+                  <ArrowDown size={20} aria-hidden="true" />
+                  <span>{t("daily:verseTip")}</span>
+                  <button
+                    type="button"
+                    className="dl-icon-action"
+                    aria-label={t("common:dismissMessage")}
+                    onClick={() => {
+                      article.current?.querySelector<HTMLButtonElement>(".dl-num")?.focus({ preventScroll: true });
+                      dismissVerseTip();
+                    }}
+                  >
+                    <X size={18} aria-hidden="true" />
+                  </button>
+                </div>
+              )}
               <div className="dl-verses">
-                {(part
-                  ? data.verses.slice(
-                      Math.floor((data.verses.length * (part.index - 1)) / part.count),
-                      Math.floor((data.verses.length * part.index) / part.count),
-                    )
-                  : data.verses
-                ).map((v) => {
+                {visibleVerses.map((v, index) => {
                   const reference = `${bookName} ${number}:${v.verseLabel}`;
                   const saved = savedVerses.some((entry) =>
                     entry.language === language && entry.book === book && entry.chapter === number && entry.verse === v.verseLabel);
@@ -207,10 +241,13 @@ export function DailyReader() {
                     <p key={v.verseId} data-verse={v.verseLabel} className={`dl-verse${wanted === v.verseLabel ? " dl-verse-target" : ""}`}>
                       <button
                         type="button"
-                        className="dl-num"
+                        className={showVerseTip && index === 0 ? "dl-num dl-num-hint" : "dl-num"}
                         aria-haspopup="dialog"
                         aria-label={t(saved ? "daily:savedVerseActions" : "daily:verseActions", { reference })}
-                        onClick={() => setSelectedVerse({ language, book, chapter: number, verse: v.verseLabel, reference })}
+                        onClick={() => {
+                          if (!verseTipDismissed) dismissVerseTip();
+                          setSelectedVerse({ language, book, chapter: number, verse: v.verseLabel, reference });
+                        }}
                       >
                         <span>{v.verseLabel}</span>
                         {saved && <Bookmark size={12} fill="currentColor" aria-hidden="true" />}

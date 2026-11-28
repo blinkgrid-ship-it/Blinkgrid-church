@@ -36,6 +36,20 @@ const goTo = (page: Page, path: string) =>
     window.dispatchEvent(new PopStateEvent("popstate"));
   }, path);
 
+test("Back and Choose a different plan both return to the plan picker", async ({ page }) => {
+  await page.goto("/en/daily");
+  const picker = page.getByRole("heading", { name: "Choose a reading plan" });
+  for (const action of ["Back", "Choose a different plan"]) {
+    await page.getByRole("button", { name: /Psalms and Proverbs/ }).click();
+    await expect(page.getByRole("heading", { name: "Today's reading" })).toBeVisible();
+    await page.getByRole("button", { name: action, exact: true }).click();
+    await expect(picker).toBeVisible();
+    await expect(page).toHaveURL(/\/en\/daily$/);
+  }
+  await page.reload();
+  await expect(picker).toBeVisible();
+});
+
 test("the site's own address (no church named) shows the normal Daily Bible, not Not available", async ({ page }) => {
   await page.goto("/en/daily");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Daily Bible");
@@ -117,6 +131,31 @@ test("saved verses persist and reopen the exact verse", async ({ page }) => {
   await expect(saved.getByRole("status")).toHaveText("Verse removed.");
   await page.reload();
   await expect(saved).toHaveCount(0);
+});
+
+test("the first-time verse tip can be dismissed on a narrow phone", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto("/en/daily/read/john/1");
+  const tip = page.getByText("Tap a verse number to save the verse, share it, or copy its link.");
+  await expect(tip).toBeVisible();
+  expect(await noOverflow(page)).toBe(true);
+  await page.getByRole("button", { name: "Dismiss message" }).click();
+  await expect(page.getByRole("button", { name: "Verse actions for John 1:1", exact: true })).toBeFocused();
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Verse actions for John 1:1", exact: true })).toBeVisible();
+  await expect(tip).toHaveCount(0);
+});
+
+test("opening a verse action completes the first-time tip", async ({ page }) => {
+  await page.goto("/en/daily/read/john/1");
+  const tip = page.locator(".dl-verse-tip");
+  await expect(tip).toBeVisible();
+  await page.getByRole("button", { name: "Verse actions for John 1:1", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "John 1:1" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Verse actions for John 1:1", exact: true })).toBeVisible();
+  await expect(tip).toHaveCount(0);
 });
 
 test("a verse link can be shared or copied and opens in a fresh tab", async ({ page, context }) => {

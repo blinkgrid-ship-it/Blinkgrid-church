@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Share2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Share2 } from "lucide-react";
 import { Row, useUI } from "../Platform";
 import { Notice } from "../ui/Notice";
 import { ncBookName } from "../nc/names";
@@ -65,6 +65,12 @@ export function TodayPlan({ books }: { books: DailyBook[] }) {
   const notStarted = !!scheduled?.schedule && scheduled.schedule.today.date < scheduled.schedule.startDate;
   return (
     <section className="dl-today" aria-labelledby="dl-today-title">
+      {!scheduled && (
+        <button type="button" className="os-secondary dl-plan-back" onClick={reset}>
+          <ArrowLeft size={18} aria-hidden="true" />
+          {t("common:back")}
+        </button>
+      )}
       <h2 id="dl-today-title">{t("daily:todayReading")}</h2>
       {today ? (
         <>

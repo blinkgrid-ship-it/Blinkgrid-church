@@ -111,8 +111,32 @@
   font-variant-numeric: tabular-nums;
 }
 .dl-num:hover,
+.dl-num.dl-num-hint,
 .dl-icon-action:hover {
   background: color-mix(in srgb, var(--core-accent) 12%, transparent);
+}
+.dl-verse-tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-end: 4px;
+  padding-inline: 10px 2px;
+  border: 1px solid var(--core-line);
+  border-radius: 10px;
+  background: #fff9dc;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+html[data-theme="dark"] .dl-verse-tip {
+  background: color-mix(in srgb, #f3d675 12%, var(--core-surface));
+}
+.dl-verse-tip > svg {
+  flex: none;
+  color: var(--core-accent);
+}
+.dl-verse-tip > span {
+  flex: 1;
+  padding-block: 6px;
 }
 .dl-num:focus-visible,
 .dl-icon-action:focus-visible {
@@ -263,6 +287,9 @@
 .dl-today h2 {
   margin: 0 0 10px;
   font-size: 20px;
+}
+.dl-plan-back {
+  margin-block-end: 12px;
 }
 .dl-plan {
   display: flex;
